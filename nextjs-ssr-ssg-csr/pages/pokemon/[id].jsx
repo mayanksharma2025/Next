@@ -62,6 +62,8 @@ export default function Home({ pokemon }) {
             sizes="(max-width: 768px) 60vw, 120px"
             loading="eager"
             priority
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8Xw8AAusB9W1gHfUAAAAASUVORK5CYII="
             width={100}
             height={100}
             style={{ width: '100%', height: 'auto' }} // responsive
