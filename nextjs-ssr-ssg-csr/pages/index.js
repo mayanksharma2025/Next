@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-export default function Home() {
-  const [pokemon, setPokemon] = useState([])
+export async function getServerSideProps() {
+  const resp = await fetch(
+    'https://raw.githubusercontent.com/jherr/pokemon/main/index.json'
+  )
+  return {
+    props: {
+      pokemon: await resp.json(),
+    },
+  }
+}
 
-  useEffect(() => {
-    async function getPokemon() {
-      const resp = await fetch(
-        'https://raw.githubusercontent.com/jherr/pokemon/main/index.json'
-      )
-
-      setPokemon(await resp.json())
-    }
-
-    getPokemon()
-  }, [])
-
+export default function Home({ pokemon }) {
   return (
     <div className={styles.container}>
       <Head>
