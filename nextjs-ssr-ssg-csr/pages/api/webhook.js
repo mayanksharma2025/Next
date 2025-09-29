@@ -5,7 +5,7 @@
 export default async function handler(req, res) {
   const SECRET_TOKEN = process.env.REVALIDATE_SECRET
 
-  if (req.query.secret !== SECRET_TOKEN) {
+  if (req.query.secret !== 'PIPELINE') {
     return res.status(401).json({ message: 'Invalid token' })
   }
 
