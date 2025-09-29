@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const resp = await fetch(
     'https://raw.githubusercontent.com/jherr/pokemon/main/index.json'
   )

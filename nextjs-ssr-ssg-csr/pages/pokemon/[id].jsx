@@ -8,7 +8,23 @@ import Link from 'next/link'
 
 import styles from '../../styles/Detail.module.css'
 
-export async function getServerSideProps({ params }) {
+export async function getStaticPaths() {
+  const resp = await fetch(
+    'https://raw.githubusercontent.com/jherr/pokemon/main/index.json'
+  )
+
+  const pokemon = await resp.json()
+
+  return {
+    paths: pokemon.map((pokemon) => ({
+      params: { id: pokemon.id.toString() },
+    })),
+
+    fallback: 'blocking', // true, false
+  }
+}
+
+export async function getStaticProps({ params }) {
   const resp = await fetch(
     `https://raw.githubusercontent.com/jherr/pokemon/main/pokemon/${params.id}.json`
   )
@@ -75,3 +91,28 @@ export default function Details({ pokemon }) {
     </div>
   )
 }
+
+/*
+Comparison Table:
+Fallback   --    Mode           --           Predefined  --   Paths	--  Unknown Paths Behavior --	Loader?	SEO Friendly? --	Page Cache After First Load
+false	     --  Only those built	--            404 Error	 --     ❌  --            ✅	        --         ❌
+true  -- 	Built at build	Generated on-demand -- ✅	    --     ⚠️  --         (Needs JS)	   --         ✅
+"blocking"  --	Built at build      --	Generated on-demand     ❌	    --         ✅          --       	✅
+
+
+🛠 Real-World Use-Case Summary
+Situation	Use Which Fallback?
+Small dataset (e.g. 151 Pokémon)	false
+Large blog site, lots of posts	true or "blocking"
+SEO important, don't want loader	"blocking"
+Internal dashboard, only known users allowed	false
+
+
+🔚 TL;DR
+Approach	                 Speed at Build	     Runtime Speed	      SEO	         Best For
+getStaticPaths(false)	      ❌Very slow	       ✅Fast              ✅	      Small dataset
+getStaticPaths (true)	      ✅ Build fast	 ⚠️First load slow	     ⚠️	    Big dataset, rare visits
+getServerSideProps()	      ✅ Build fast	 ⚠️Slower per page	     ✅	     Fresh data, large data
+Client-side fetching	      ✅ Super fast	 ✅Fast (after load)	    ❌	     Internal tools / apps
+
+*/
