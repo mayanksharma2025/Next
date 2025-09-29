@@ -28,10 +28,13 @@ export async function getStaticProps({ params }) {
   const resp = await fetch(
     `https://raw.githubusercontent.com/jherr/pokemon/main/pokemon/${params.id}.json`
   )
+  const pokemon = await resp.json()
 
+  // Add random number at build time (ISR regenerate hone par ye change hoga)
+  pokemon.randomNumber = Math.floor(Math.random() * 1000)
   return {
     props: {
-      pokemon: await resp.json(),
+      pokemon,
     },
     revalidate: 30,
   }
@@ -64,7 +67,9 @@ export default function Details({ pokemon }) {
         </div>
 
         <div>
-          <div className={styles.name}>{pokemon.name}</div>
+          <div className={styles.name}>
+            {pokemon.name} {pokemon.randomNumber}
+          </div>
 
           <div className={styles.type}>{pokemon.type.join(', ')}</div>
 
