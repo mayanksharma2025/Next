@@ -1,5 +1,37 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+### 1️⃣ Clone or Create the Project
+
+npx create-next-app@latest nextjs14-tanstack-crud
+cd nextjs14-tanstack-crud
+
+### 2️⃣ Install Dependencies
+
+npm install next react react-dom \
+@tanstack/react-query @tanstack/react-query-devtools \
+axios tailwindcss postcss autoprefixer \
+clsx json-server typescript
+
+### 3️⃣ Initialize TailwindCSS
+
+npx tailwindcss init -p
+
+## Then make sure your tailwind.config.js looks like:
+
+module.exports = {
+content: ['./app/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+theme: { extend: {} },
+plugins: [],
+}
+
+### Then start your mock backend:
+
+npm run json-server
+
+### 6️⃣ (Optional) Add .env.local
+
+NEXT_PUBLIC_JSON_SERVER_URL=http://localhost:3001
+
 ## Getting Started
 
 First, run the development server:
