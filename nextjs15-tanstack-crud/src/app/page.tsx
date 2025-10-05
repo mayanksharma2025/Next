@@ -1,48 +1,16 @@
 'use client'
+import React from 'react'
+import UserList from './components/UserList'
+import PostList from './components/PostList'
+import TodoList from './components/TodoList'
 
-import { useEffect, useState } from 'react'
+const HomePage = () => (
+  <main className="p-6 space-y-6">
+    <h1 className="text-2xl font-bold">🚀 JSONPlaceholder Dashboard</h1>
+    <UserList />
+    <PostList />
+    <TodoList />
+  </main>
+)
 
-type User = {
-  id: number
-  name: string
-  email: string
-}
-
-interface ApiResponse<T> {
-  data: T
-  status: number
-  error?: string
-}
-
-function useFetch<T>(url: string) {
-  const [data, setData] = useState<T | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (url)
-      fetch(url)
-        .then((res) => res.json())
-        .then((json) => setData(json))
-        .finally(() => setLoading(false))
-  }, [url])
-
-  return { data, loading }
-}
-
-const UserPage = () => {
-  const { data: users, loading } = useFetch<User[]>(
-    'https://jsonplaceholder.typicode.com/users'
-  )
-
-  if (loading) return <div>Loading...</div>
-
-  return (
-    <ul>
-      {users?.map((u) => (
-        <li key={u.id}>{u.name}</li>
-      ))}
-    </ul>
-  )
-}
-
-export default UserPage
+export default HomePage
