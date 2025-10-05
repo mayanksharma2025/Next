@@ -1,43 +1,48 @@
 'use client'
-// interface
-interface User {
-  id?: number
+
+import { useEffect, useState } from 'react'
+
+type User = {
+  id: number
   name: string
   email: string
 }
 
-// A reusable Table component
-interface TableProps<T> {
-  data: T[]
-  renderRow: (item: T) => React.ReactNode
+interface ApiResponse<T> {
+  data: T
+  status: number
+  error?: string
 }
 
-function Table<T>({ data, renderRow }: TableProps<T>) {
+function useFetch<T>(url: string) {
+  const [data, setData] = useState<T | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (url)
+      fetch(url)
+        .then((res) => res.json())
+        .then((json) => setData(json))
+        .finally(() => setLoading(false))
+  }, [url])
+
+  return { data, loading }
+}
+
+const UserPage = () => {
+  const { data: users, loading } = useFetch<User[]>(
+    'https://jsonplaceholder.typicode.com/users'
+  )
+
+  if (loading) return <div>Loading...</div>
+
   return (
-    <table>
-      <tbody>
-        {data.map((item, idx) => (
-          <tr key={idx}>{renderRow(item)}</tr>
-        ))}
-      </tbody>
-    </table>
+    <ul>
+      {users?.map((u) => (
+        <li key={u.id}>{u.name}</li>
+      ))}
+    </ul>
   )
 }
 
-// Usage with User
-function Home() {
-  return (
-    <Table<User>
-      data={[{ id: 1, name: 'Alice', email: 'alice@test.com' }]}
-      renderRow={(user) => (
-        <>
-          <td>{user.id}</td>
-          <td>{user.name}</td>
-          <td>{user.email}</td>
-        </>
-      )}
-    />
-  )
-}
-
-export default Home
+export default UserPage
