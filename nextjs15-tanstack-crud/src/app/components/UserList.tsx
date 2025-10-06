@@ -7,7 +7,7 @@ const UserList: React.FC = () => {
     data: users,
     loading,
     error,
-  } = useFetch<User>('https://jsonplaceholder.typicode.com/users')
+  } = useFetch<User[]>('https://jsonplaceholder.typicode.com/users')
 
   if (loading) return <p>Loading users...</p>
   if (error) return <p>Error: {error}</p>
