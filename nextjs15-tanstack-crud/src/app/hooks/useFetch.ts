@@ -2,13 +2,13 @@
 import { useEffect, useState } from "react";
 
 interface UseFetchState<T> {
-    data: T | null;
+    data: T[] | null;
     loading: boolean;
     error: string | null;
 }
 
 export function useFetch<T>(url: string): UseFetchState<T> {
-    const [data, setData] = useState<T | null>(null);
+    const [data, setData] = useState<T[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
