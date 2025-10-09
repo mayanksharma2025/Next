@@ -1,9 +1,10 @@
 'use client'
 import React from 'react'
-import UserList from './components/UserList'
+import UserList from './components2/UserList2'
 import PostList from './components/PostList'
 import TodoList from './components/TodoList'
 import ActiveInactiveUserList from './components/ActiveInactiveUserList'
+import UserDetails from './components2/UserDetails'
 
 const HomePage = () => (
   <main className="p-6 space-y-6">
@@ -12,6 +13,7 @@ const HomePage = () => (
     <UserList />
     <PostList />
     <TodoList />
+    <UserDetails id={2} />
   </main>
 )
 

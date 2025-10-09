@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 
 type Status = 'active' | 'inactive' | 'pending'
@@ -106,6 +107,7 @@ const UserLists: React.FC = () => {
         </ul>
       </section>
       <ActiveUserList {...{ users }} />
+      <InactiveUserList {...{ users }} />
     </div>
   )
 }

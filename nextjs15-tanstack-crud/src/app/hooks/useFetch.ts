@@ -1,6 +1,7 @@
+'use client'
 import { useEffect, useState } from "react";
 
-interface UseFetchState<T> {
+export interface UseFetchState<T> {
     data: T | null;
     loading: boolean;
     error: string | null;

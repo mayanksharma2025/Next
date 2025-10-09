@@ -1,5 +1,6 @@
+'use client'
 import React from 'react'
-import { useFetch } from '../hooks/useFetch'
+import { useFetch, UseFetchState } from '../hooks/useFetch'
 import { User, UserPreview } from '../types/api'
 
 const UserList: React.FC = () => {
@@ -7,7 +8,9 @@ const UserList: React.FC = () => {
     data: users,
     loading,
     error,
-  } = useFetch<User[]>('https://jsonplaceholder.typicode.com/users')
+  }: UseFetchState<User[]> = useFetch<User[]>(
+    'https://jsonplaceholder.typicode.com/users'
+  )
 
   if (loading) return <p>Loading users...</p>
   if (error) return <p>Error: {error}</p>
