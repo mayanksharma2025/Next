@@ -1,0 +1,159 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Alice Johnson",
+      "email": "alice.johnson@example.com",
+      "age": 29,
+      "phone": "+1-555-112-3344",
+      "photos": [
+        "/images/user1-1.jpg",
+        "/images/user1-2.jpg"
+      ],
+      "educations": [
+        {
+          "school": "Stanford University",
+          "degree": "B.Sc. Computer Science",
+          "year": 2017
+        },
+        {
+          "school": "MIT",
+          "degree": "M.Sc. Data Science",
+          "year": 2019
+        }
+      ],
+      "experiences": [
+        {
+          "company": "Google",
+          "role": "Software Engineer",
+          "from": 2019,
+          "to": 2021
+        },
+        {
+          "company": "Meta",
+          "role": "Senior Developer",
+          "from": 2021,
+          "to": 2024
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Bob Williams",
+      "email": "bob.williams@example.com",
+      "age": 35,
+      "phone": "+1-555-223-4455",
+      "photos": [
+        "/images/user2-1.jpg"
+      ],
+      "educations": [
+        {
+          "school": "Harvard University",
+          "degree": "MBA",
+          "year": 2015
+        }
+      ],
+      "experiences": [
+        {
+          "company": "Tesla",
+          "role": "Product Manager",
+          "from": 2016,
+          "to": 2022
+        },
+        {
+          "company": "SpaceX",
+          "role": "Program Director",
+          "from": 2022,
+          "to": 2024
+        }
+      ]
+    },
+    {
+      "name": "Carla Martinez",
+      "email": "carla.martinez@example.com",
+      "age": 27,
+      "phone": "+1-555-556-7788",
+      "photos": [
+        "/images/user3-1.jpg"
+      ],
+      "educations": [
+        {
+          "school": "UC Berkeley",
+          "degree": "B.A. Design",
+          "year": 2018
+        }
+      ],
+      "experiences": [
+        {
+          "company": "Adobe",
+          "role": "UX Designer",
+          "from": 2018,
+          "to": 2023
+        }
+      ],
+      "id": "3"
+    },
+    {
+      "id": "d432",
+      "name": "Mayank Sharma",
+      "email": "mayankece155@gmail.com",
+      "age": 30,
+      "phone": "6203411149",
+      "photos": [
+        "https://www.shutterstock.com/image-photo/funny-dog-licking-lips-tongue-260nw-1761385949.jpg"
+      ],
+      "educations": [],
+      "experiences": []
+    }
+  ],
+  "posts": [
+    {
+      "title": "Exploring Next.js 15 Features123",
+      "description": "A quick dive into new features and improvements in Next.js 15.",
+      "userId": 1,
+      "images": [
+        "/images/post1.jpg"
+      ],
+      "createdAt": "2025-10-01T10:00:00Z",
+      "id": "1"
+    },
+    {
+      "id": "2",
+      "userId": 2,
+      "title": "Mastering React Query Mutations",
+      "description": "How to perform optimistic updates and invalidate queries efficiently.",
+      "images": [
+        "/images/post2.jpg"
+      ],
+      "createdAt": "2025-10-03T12:30:00Z"
+    },
+    {
+      "id": "3",
+      "userId": 3,
+      "title": "Building a Design System with TailwindCSS",
+      "description": "A guide to creating reusable components using TailwindCSS and shadcn/ui.",
+      "images": [
+        "/images/post3.jpg"
+      ],
+      "createdAt": "2025-10-07T15:15:00Z"
+    },
+    {
+      "id": "4",
+      "userId": 1,
+      "title": "Optimizing API Calls with TanStack Query",
+      "description": "Learn how to use query caching, pagination, and infinite queries.",
+      "images": [
+        "/images/post4.jpg"
+      ],
+      "createdAt": "2025-10-09T08:45:00Z"
+    },
+    {
+      "title": "My post",
+      "description": "p1",
+      "userId": 3,
+      "images": [],
+      "createdAt": "2025-10-10T17:00:09.816Z",
+      "id": "dd02"
+    }
+  ]
+}

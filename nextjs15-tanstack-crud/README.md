@@ -66,3 +66,91 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# 1. Clone repo or create project
+
+npx create-next-app@latest nextjs14-tanstack-crud
+cd nextjs14-tanstack-crud
+
+# 2. Install deps
+
+npm install next react react-dom \
+@tanstack/react-query @tanstack/react-query-devtools \
+axios tailwindcss postcss autoprefixer \
+clsx json-server typescript
+
+# 3. Initialize Tailwind
+
+npx tailwindcss init -p
+
+# 4. Add db.json and files above
+
+# 5. Start JSON Server
+
+npm run json-server
+
+# 6. Start Next.js
+
+npm run dev
+
+<!-- Project Structure -->
+
+nextjs14-tanstack-crud/
+│
+├── app/
+│ ├── api/
+│ │ ├── posts/
+│ │ │ └── route.ts # CRUD proxy for posts (ISR invalidate)
+│ │ └── users/
+│ │ └── route.ts # CRUD proxy for users (optional: GET/POST/PUT/DELETE)
+│ │
+│ ├── users/
+│ │ ├── [id]/
+│ │ │ └── page.tsx # Dynamic user profile page (details + posts)
+│ │ └── page.tsx # List of all users
+│ │
+│ ├── styles/
+│ │ └── globals.css # Tailwind base styles
+│ │
+│ ├── layout.tsx # Root layout (providers, metadata)
+│ └── page.tsx # Home page (PostList + PostForm)
+│
+├── components/
+│ ├── PostForm.tsx # Create/update post form (mutation, optimistic)
+│ ├── PostList.tsx # Infinite query list (pagination, search, sort)
+│ ├── UserCard.tsx # Small card showing user info and photo
+│ ├── UserList.tsx # Paginated list of all users
+│ ├── UserProfile.tsx # Detailed user view (educations, experiences, posts)
+│ └── Loader.tsx # Generic loading spinner (for reuse)
+│
+├── lib/
+│ ├── apiClient.ts # Axios client (JSON Server base)
+│ ├── queryClient.tsx # TanStack Query client/provider
+│ ├── types.ts # Shared TypeScript types (User, Post, etc.)
+│ └── utils.ts # Small helpers (formatDate, etc.)
+│
+├── hooks/
+│ ├── useUsers.ts # TanStack Query hooks for users (list, detail, create, update)
+│ ├── usePosts.ts # TanStack Query hooks for posts
+│ └── useDebounce.ts # Debounce helper for search inputs
+│
+├── public/
+│ ├── images/
+│ │ ├── user1-1.jpg
+│ │ ├── user1-2.jpg
+│ │ └── post1.jpg
+│ └── favicon.ico
+│
+├── styles/
+│ └── globals.css # Tailwind base (duplicate for fallback)
+│
+├── db.json # JSON Server DB (users, posts, photos, etc.)
+│
+├── tailwind.config.js # Tailwind configuration
+├── postcss.config.js # PostCSS config
+├── next.config.js # Next.js config
+├── package.json # Dependencies & scripts
+├── tsconfig.json # TypeScript config
+├── .env.local # Optional environment variables
+├── .gitignore # Git ignore list
+└── README.md # Documentation
