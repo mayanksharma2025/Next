@@ -4,7 +4,7 @@ import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import UserCard from './UserCard'
-import { User } from '../lib/types'
+import { User } from '../app/lib/types'
 import Loader from './Loader'
 
 interface UserListProps {

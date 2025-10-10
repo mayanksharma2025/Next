@@ -104,6 +104,16 @@
       ],
       "educations": [],
       "experiences": []
+    },
+    {
+      "id": "4b4c",
+      "name": "Manku",
+      "email": "mank@gmail.com",
+      "age": 25,
+      "phone": "5656565668",
+      "photos": [],
+      "educations": [],
+      "experiences": []
     }
   ],
   "posts": [
@@ -146,14 +156,6 @@
         "/images/post4.jpg"
       ],
       "createdAt": "2025-10-09T08:45:00Z"
-    },
-    {
-      "title": "My post",
-      "description": "p1",
-      "userId": 3,
-      "images": [],
-      "createdAt": "2025-10-10T17:00:09.816Z",
-      "id": "dd02"
     }
   ]
 }

@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { User, Post } from '../lib/types'
+import { User, Post } from '../app/lib/types'
 import PostForm from './PostForm'
 import Loader from './Loader'
 

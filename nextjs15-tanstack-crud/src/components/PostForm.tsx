@@ -2,19 +2,17 @@
 
 import React, { useState, useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
-import { Post, User } from '../lib/types'
+import { Post, User } from '../app/lib/types'
+import apiClient from '../app/lib/apiClient'
 
 interface PostFormProps {
-  post?: Post // optional, for editing
-  users: User[] // for select dropdown
+  post?: Post
+  users: User[]
   onClose?: () => void
 }
 
 export default function PostForm({ post, users, onClose }: PostFormProps) {
   const queryClient = useQueryClient()
-
-  // Initialize form state
   const [title, setTitle] = useState(post?.title || '')
   const [description, setDescription] = useState(post?.description || '')
   const [userId, setUserId] = useState<number>(
@@ -22,7 +20,6 @@ export default function PostForm({ post, users, onClose }: PostFormProps) {
   )
   const [images, setImages] = useState<string[]>(post?.images || [])
 
-  // Update state if post changes (for edit)
   useEffect(() => {
     if (post) {
       setTitle(post.title)
@@ -32,43 +29,12 @@ export default function PostForm({ post, users, onClose }: PostFormProps) {
     }
   }, [post])
 
-  interface MutationContext {
-    previousPosts?: Post[]
-  }
-
-  const mutation = useMutation<Post, unknown, Partial<Post>, MutationContext>({
-    mutationFn: async (newPost) => {
-      if (post?.id) {
-        const res = await axios.put<Post>(`/api/posts/${post.id}`, newPost)
-        return res.data
-      } else {
-        const res = await axios.post<Post>('/api/posts', newPost)
-        return res.data
-      }
-    },
-    onMutate: async (newPost) => {
-      await queryClient.cancelQueries({ queryKey: ['posts'] })
-      const previousPosts = queryClient.getQueryData<Post[]>(['posts'])
-
-      if (!post?.id) {
-        queryClient.setQueryData<Post[]>(['posts'], (old = []) => [
-          ...old,
-          {
-            ...newPost,
-            id: Math.random(),
-            createdAt: new Date().toISOString(),
-          } as Post,
-        ])
-      }
-
-      return { previousPosts }
-    },
-    onError: (_err, _newPost, context) => {
-      if (context?.previousPosts) {
-        queryClient.setQueryData(['posts'], context.previousPosts)
-      }
-    },
-    onSettled: () => {
+  const mutation = useMutation({
+    mutationFn: (newPost: Partial<Post>) =>
+      post
+        ? apiClient.put(`/posts/${post.id}`, newPost)
+        : apiClient.post('/posts', newPost),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] })
       if (onClose) onClose()
     },
@@ -94,7 +60,6 @@ export default function PostForm({ post, users, onClose }: PostFormProps) {
         {post ? 'Edit Post' : 'Create Post'}
       </h2>
 
-      {/* Title */}
       <div>
         <label className="block font-semibold mb-1">Title</label>
         <input
@@ -106,7 +71,6 @@ export default function PostForm({ post, users, onClose }: PostFormProps) {
         />
       </div>
 
-      {/* Description */}
       <div>
         <label className="block font-semibold mb-1">Description</label>
         <textarea
@@ -117,7 +81,6 @@ export default function PostForm({ post, users, onClose }: PostFormProps) {
         />
       </div>
 
-      {/* User select */}
       <div>
         <label className="block font-semibold mb-1">User</label>
         <select
@@ -133,7 +96,6 @@ export default function PostForm({ post, users, onClose }: PostFormProps) {
         </select>
       </div>
 
-      {/* Images */}
       <div>
         <label className="block font-semibold mb-1">
           Images (comma separated URLs)
@@ -148,7 +110,6 @@ export default function PostForm({ post, users, onClose }: PostFormProps) {
         />
       </div>
 
-      {/* Submit */}
       <button
         type="submit"
         disabled={mutation.isPending}

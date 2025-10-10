@@ -1,5 +1,5 @@
 import './globals.css'
-import { QueryProvider } from '../lib/queryClient'
+import { QueryProvider } from './lib/queryClient'
 
 export const metadata = {
   title: 'Next.js TanStack CRUD',

@@ -3,18 +3,24 @@
 import React, { useState } from 'react'
 import UserList from '../../components/UserList'
 import UserForm from '../../components/UserForm'
-import { User } from '../../lib/types'
+import { useUsers } from '../hooks/useUsers'
+import Loader from '../../components/Loader'
+import { User } from '../lib/types'
 
 export default function UsersPage() {
+  const { data: users, isLoading } = useUsers()
   const [showForm, setShowForm] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
 
+  if (isLoading) return <Loader message="Loading users..." />
+  if (!users)
+    return <div className="text-center text-red-500 py-8">No users found</div>
+
   return (
     <div className="max-w-4xl mx-auto py-8 space-y-6">
-      {/* Create User Button */}
       <button
         onClick={() => {
-          setEditingUser(null) // clear edit
+          setEditingUser(null)
           setShowForm(true)
         }}
         className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
@@ -22,7 +28,6 @@ export default function UsersPage() {
         Create New User
       </button>
 
-      {/* User Form */}
       {showForm && (
         <UserForm
           user={editingUser || undefined}
@@ -30,7 +35,6 @@ export default function UsersPage() {
         />
       )}
 
-      {/* List of users */}
       <UserList
         onEdit={(user: User) => {
           setEditingUser(user)

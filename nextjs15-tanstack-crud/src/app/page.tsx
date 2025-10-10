@@ -3,33 +3,17 @@
 import React, { useState } from 'react'
 import PostList from '../components/PostList'
 import PostForm from '../components/PostForm'
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
-import { User } from '../lib/types'
+import { useUsers } from './hooks/useUsers'
 import Loader from '../components/Loader'
 import Link from 'next/link'
 
 export default function HomePage() {
+  const { data: users, isLoading } = useUsers()
   const [showForm, setShowForm] = useState(false)
 
-  // Fetch all users for PostForm dropdown
-  const {
-    data: users,
-    isLoading,
-    isError,
-  } = useQuery<User[]>({
-    queryKey: ['users'],
-    queryFn: async () => {
-      const res = await axios.get('/api/users')
-      return res.data
-    },
-  })
-
   if (isLoading) return <Loader message="Loading users..." />
-  if (isError || !users)
-    return (
-      <div className="text-red-500 text-center py-8">Failed to load users</div>
-    )
+  if (!users)
+    return <div className="text-center text-red-500 py-8">No users found</div>
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4 space-y-6">
@@ -46,12 +30,9 @@ export default function HomePage() {
         </button>
       </div>
 
-      {/* Post creation form */}
       {showForm && (
         <PostForm users={users} onClose={() => setShowForm(false)} />
       )}
-
-      {/* List of posts */}
       <PostList users={users} />
     </div>
   )

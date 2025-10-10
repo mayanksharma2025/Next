@@ -1,9 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
-import { Post, User } from '../lib/types'
+import { usePosts, useDeletePost } from '../app/hooks/usePosts'
+import { Post, User } from '../app/lib/types'
 import Loader from './Loader'
 import PostForm from './PostForm'
 
@@ -12,30 +11,15 @@ interface PostListProps {
 }
 
 export default function PostList({ users }: PostListProps) {
+  const { data: posts, isLoading } = usePosts()
   const [editingPost, setEditingPost] = useState<Post | null>(null)
   const [showForm, setShowForm] = useState(false)
-
-  const {
-    data: posts,
-    isLoading,
-    isError,
-  } = useQuery<Post[]>({
-    queryKey: ['posts'],
-    queryFn: async () => {
-      const res = await axios.get('/api/posts')
-      return res.data
-    },
-  })
+  const deleteMutation = useDeletePost()
 
   if (isLoading) return <Loader message="Loading posts..." />
-  if (isError)
-    return (
-      <div className="text-red-500 text-center py-8">Failed to load posts</div>
-    )
 
   return (
     <div className="space-y-4">
-      {/* List of posts */}
       {posts?.map((post) => (
         <div
           key={post.id}
@@ -45,30 +29,40 @@ export default function PostList({ users }: PostListProps) {
             <h3 className="font-semibold">{post.title}</h3>
             <p className="text-gray-600">{post.description}</p>
           </div>
-          <button
-            className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-            onClick={() => {
-              setEditingPost(post)
-              setShowForm(true)
-            }}
-          >
-            Edit
-          </button>
+          <div>
+            <button
+              className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+              onClick={() => {
+                setEditingPost(post)
+                setShowForm(true)
+              }}
+            >
+              Edit
+            </button>
+            <button
+              className="ml-2 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+              disabled={deleteMutation.isPending}
+              onClick={() => {
+                if (confirm('Are you sure you want to delete this post?')) {
+                  deleteMutation.mutate(post.id)
+                }
+              }}
+            >
+              {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+            </button>
+          </div>
         </div>
       ))}
 
-      {/* Edit or create form */}
-      {showForm && (
-        <div className="mt-4">
-          <PostForm
-            post={editingPost || undefined}
-            users={users}
-            onClose={() => {
-              setShowForm(false)
-              setEditingPost(null)
-            }}
-          />
-        </div>
+      {showForm && editingPost && (
+        <PostForm
+          post={editingPost}
+          users={users}
+          onClose={() => {
+            setShowForm(false)
+            setEditingPost(null)
+          }}
+        />
       )}
     </div>
   )

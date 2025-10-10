@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { User } from '../lib/types'
+import { User } from '../app/lib/types'
 import Link from 'next/link'
 
 interface UserCardProps {

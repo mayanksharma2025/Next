@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { User, Education, Experience } from '../lib/types'
+import { User, Education, Experience } from '../app/lib/types'
 
 interface UserFormProps {
   user?: User // Optional for editing
