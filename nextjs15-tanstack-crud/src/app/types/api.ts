@@ -24,6 +24,14 @@ export interface Todo {
     completed: boolean;
 }
 
+export interface Comment {
+    postId: number;
+    id: number;
+    name: string;
+    email: string;
+    body: string;
+}
+
 // ======================
 // GENERIC API RESPONSE
 // ======================

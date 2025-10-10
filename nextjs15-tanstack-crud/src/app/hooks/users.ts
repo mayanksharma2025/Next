@@ -1,5 +1,5 @@
 import { apiFetch } from "./apiClient";
-import { ApiResponse } from "../types/api";
+import { ApiResponse, Comment } from "../types/api";
 
 export interface User {
     id: number;
@@ -16,3 +16,8 @@ export const getUsers = async (): Promise<ApiResponse<User[]>> => {
 export const getUserById = async (id: number): Promise<ApiResponse<User>> => {
     return apiFetch<User>(`https://jsonplaceholder.typicode.com/users/${id}`);
 };
+
+// Get comments by PostId
+export const getCommentByPostId = async (postId: number): Promise<ApiResponse<Comment[]>> => {
+    return apiFetch<Comment[]>(`https://jsonplaceholder.typicode.com/comments?postId=${postId}`)
+}
