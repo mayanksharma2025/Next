@@ -30,3 +30,8 @@ export interface Post {
   images: string[]
   createdAt: string
 }
+
+export interface PaginatedResponse<T> {
+  data: T[]
+  total: number
+}

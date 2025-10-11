@@ -154,3 +154,5 @@ nextjs14-tanstack-crud/
 ├── .env.local # Optional environment variables
 ├── .gitignore # Git ignore list
 └── README.md # Documentation
+
+npx json-server --watch db.json --port 3001 --middlewares ./middlewares.js

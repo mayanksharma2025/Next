@@ -114,11 +114,23 @@
       "photos": [],
       "educations": [],
       "experiences": []
+    },
+    {
+      "name": "Admin User",
+      "email": "mayankadmin@gmail.com",
+      "age": 18,
+      "phone": "5456445454",
+      "photos": [
+        "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=1024x1024&w=is&k=20&c=-mUWsTSENkugJ3qs5covpaj-bhYpxXY-v9RDpzsw504="
+      ],
+      "educations": [],
+      "experiences": [],
+      "id": "1816"
     }
   ],
   "posts": [
     {
-      "title": "Exploring Next.js 15 Features123",
+      "title": "Exploring Next.js 15 Features1234",
       "description": "A quick dive into new features and improvements in Next.js 15.",
       "userId": 1,
       "images": [
@@ -156,6 +168,16 @@
         "/images/post4.jpg"
       ],
       "createdAt": "2025-10-09T08:45:00Z"
+    },
+    {
+      "title": "Post 1",
+      "description": "1",
+      "userId": "1",
+      "images": [
+        "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=1024x1024&w=is&k=20&c=-mUWsTSENkugJ3qs5covpaj-bhYpxXY-v9RDpzsw504="
+      ],
+      "createdAt": "2025-10-11T08:40:45.421Z",
+      "id": "5"
     }
   ]
 }
