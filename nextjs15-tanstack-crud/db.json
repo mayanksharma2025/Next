@@ -7,7 +7,7 @@
       "age": 29,
       "phone": "+1-555-112-3344",
       "photos": [
-        "/images/user1-1.jpg",
+        "/globe.svg",
         "/images/user1-2.jpg"
       ],
       "educations": [
@@ -126,6 +126,46 @@
       "educations": [],
       "experiences": [],
       "id": "1816"
+    },
+    {
+      "id": "c833",
+      "name": "nmcvcvm",
+      "email": "xzcxzxc@gmail.com",
+      "age": 18,
+      "phone": "42342343208",
+      "photos": [],
+      "educations": [],
+      "experiences": []
+    },
+    {
+      "id": "fcfc",
+      "name": "nbmbvmxc",
+      "email": "vcvnmcxn@gmail.com",
+      "age": 54,
+      "phone": "06203411149",
+      "photos": [],
+      "educations": [],
+      "experiences": []
+    },
+    {
+      "id": "1083",
+      "name": "nmbnvbcx",
+      "email": "nbbcvbnmc@gmail.com",
+      "age": 18,
+      "phone": "5838584227",
+      "photos": [],
+      "educations": [],
+      "experiences": []
+    },
+    {
+      "id": "6214",
+      "name": "nbmxcnbvm",
+      "email": "xzczxc@gmail.com",
+      "age": 18,
+      "phone": "06203411149",
+      "photos": [],
+      "educations": [],
+      "experiences": []
     }
   ],
   "posts": [
@@ -140,14 +180,11 @@
       "id": "1"
     },
     {
-      "id": "2",
-      "userId": 2,
-      "title": "Mastering React Query Mutations",
-      "description": "How to perform optimistic updates and invalidate queries efficiently.",
-      "images": [
-        "/images/post2.jpg"
-      ],
-      "createdAt": "2025-10-03T12:30:00Z"
+      "title": "Top31",
+      "description": "nrwws",
+      "userId": "1",
+      "images": [],
+      "id": "2"
     },
     {
       "id": "3",
@@ -170,14 +207,180 @@
       "createdAt": "2025-10-09T08:45:00Z"
     },
     {
-      "title": "Post 1",
-      "description": "1",
-      "userId": "1",
-      "images": [
-        "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=1024x1024&w=is&k=20&c=-mUWsTSENkugJ3qs5covpaj-bhYpxXY-v9RDpzsw504="
+      "id": "7b6c",
+      "title": "PostA",
+      "description": "ytureure",
+      "userId": 2,
+      "images": []
+    }
+  ],
+  "movies": [
+    {
+      "id": 1,
+      "title": "Inception",
+      "director": "Christopher Nolan",
+      "releaseYear": 2010,
+      "genres": [
+        "Action",
+        "Sci-Fi",
+        "Thriller"
       ],
-      "createdAt": "2025-10-11T08:40:45.421Z",
-      "id": "5"
+      "rating": 8.8,
+      "durationMinutes": 148,
+      "cast": [
+        {
+          "name": "Leonardo DiCaprio",
+          "role": "Cobb"
+        },
+        {
+          "name": "Joseph Gordon-Levitt",
+          "role": "Arthur"
+        }
+      ],
+      "isAvailable": true,
+      "createdAt": "2023-01-01T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "title": "The Godfather",
+      "director": "Francis Ford Coppola",
+      "releaseYear": 1972,
+      "genres": [
+        "Crime",
+        "Drama"
+      ],
+      "rating": 9.2,
+      "durationMinutes": 175,
+      "cast": [
+        {
+          "name": "Marlon Brando",
+          "role": "Don Vito Corleone"
+        },
+        {
+          "name": "Al Pacino",
+          "role": "Michael Corleone"
+        }
+      ],
+      "isAvailable": true,
+      "createdAt": "2023-01-02T12:00:00Z"
+    },
+    {
+      "id": 3,
+      "title": "Parasite",
+      "director": "Bong Joon-ho",
+      "releaseYear": 2019,
+      "genres": [
+        "Drama",
+        "Thriller"
+      ],
+      "rating": 8.6,
+      "durationMinutes": 132,
+      "cast": [
+        {
+          "name": "Song Kang-ho",
+          "role": "Kim Ki-taek"
+        },
+        {
+          "name": "Choi Woo-shik",
+          "role": "Kim Ki-woo"
+        }
+      ],
+      "isAvailable": false,
+      "createdAt": "2023-01-03T09:30:00Z"
+    },
+    {
+      "id": 4,
+      "title": "Toy Story",
+      "director": "John Lasseter",
+      "releaseYear": 1995,
+      "genres": [
+        "Animation",
+        "Comedy",
+        "Adventure"
+      ],
+      "rating": 8.3,
+      "durationMinutes": 81,
+      "cast": [
+        {
+          "name": "Tom Hanks",
+          "role": "Woody (voice)"
+        },
+        {
+          "name": "Tim Allen",
+          "role": "Buzz Lightyear (voice)"
+        }
+      ],
+      "isAvailable": true,
+      "createdAt": "2023-01-04T14:45:00Z"
+    },
+    {
+      "id": 5,
+      "title": "The Dark Knight",
+      "director": "Christopher Nolan",
+      "releaseYear": 2008,
+      "genres": [
+        "Action",
+        "Crime",
+        "Drama"
+      ],
+      "rating": 9,
+      "durationMinutes": 152,
+      "cast": [
+        {
+          "name": "Christian Bale",
+          "role": "Bruce Wayne / Batman"
+        },
+        {
+          "name": "Heath Ledger",
+          "role": "Joker"
+        }
+      ],
+      "isAvailable": true,
+      "createdAt": "2023-01-05T16:20:00Z"
+    },
+    {
+      "id": "b7cc",
+      "title": "Batman ",
+      "director": "mannana",
+      "releaseYear": 1900,
+      "genres": [
+        "Adventure"
+      ],
+      "rating": 3,
+      "durationMinutes": 246
+    },
+    {
+      "title": "Batman dark Knight",
+      "director": "mannana wqqw",
+      "releaseYear": 1900,
+      "genres": [
+        "Thriller"
+      ],
+      "rating": 5,
+      "durationMinutes": 246,
+      "id": "74d4"
+    },
+    {
+      "title": "SpiderMan",
+      "director": "mncn",
+      "releaseYear": 1997,
+      "genres": [
+        "Adventure"
+      ],
+      "rating": 5,
+      "durationMinutes": 200,
+      "id": "7e1f"
+    },
+    {
+      "id": "ce2e",
+      "title": "Conjuring",
+      "director": "ncbvnbcxv",
+      "releaseYear": 2008,
+      "genres": [
+        "Thriller"
+      ],
+      "rating": 1,
+      "durationMinutes": 159
     }
   ]
 }
