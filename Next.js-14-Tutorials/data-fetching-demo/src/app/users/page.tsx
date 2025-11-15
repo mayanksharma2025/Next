@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+// export const dynamic = 'force-dynamic' //force-static", "auto", and "error"
 
 type User = {
   id: number
@@ -54,6 +55,6 @@ export default async function UsersPage() {
       </div>
     )
   } catch (err: unknown | any) {
-    return <div className="text-md">Beta Error hai {err.message}</div>
+    return <div className="text-md"> Catch Error:- {err.message}</div>
   }
 }

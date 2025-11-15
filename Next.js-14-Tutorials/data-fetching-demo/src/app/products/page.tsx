@@ -6,10 +6,13 @@ type Product = {
   price: number
   description: string
 }
+// Default its SSG
+// cache: 'no-store' then SSR
+//  next: { revalidate: 60 } then ISR
 
 export default async function ProductsPage() {
   const productsResponse = await fetch('http://localhost:3001/products', {
-    cache: 'no-store',
+    // cache: 'no-store', dont add this line its totally opposite...
     next: { revalidate: 60 },
   })
   const cookieStore = cookies()
