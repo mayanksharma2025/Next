@@ -18,7 +18,7 @@ export default function Home() {
         <h4 className="font-lato font-bold">Lato Bold</h4>
         <h5 className="font-lato italic font-normal">Lato Italic</h5>
 
-        <h1 className="font-opensans! font-normal">Open Sans Regular</h1>
+        <h1 className="font-opensans font-normal">Open Sans Regular</h1>
         <h2 className="font-opensans font-medium">Open Sans Medium</h2>
         <h3 className="font-opensans font-bold">Open Sans Bold</h3>
         <h4 className="font-opensans italic font-normal">Open Sans Italic</h4>

@@ -2,27 +2,29 @@ import './globals.css'
 import type { ReactNode } from 'react'
 import localFont from 'next/font/local'
 
+// import font from '../public/fonts'
+
 // -------------- Local Fonts -------------------
 // Lato
 const lato = localFont({
   src: [
     {
-      path: '../../public/fonts/Lato-Regular.woff2',
+      path: '../public/fonts/Lato-Regular.woff2',
       weight: '400',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/LatoSemibold.woff2',
+      path: '../public/fonts/LatoSemibold.woff2',
       weight: '600',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/Lato-Bold.woff2',
+      path: '../public/fonts/Lato-Bold.woff2',
       weight: '700',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/Lato-Italic.woff2',
+      path: '../public/fonts/Lato-Italic.woff2',
       weight: '400',
       style: 'italic',
     },
@@ -36,17 +38,17 @@ const lato = localFont({
 const openSans = localFont({
   src: [
     {
-      path: '../../public/fonts/OpenSans-Regular.woff2',
+      path: '../public/fonts/OpenSans-Regular.woff2',
       weight: '400',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/OpenSans-Medium.woff2',
+      path: '../public/fonts/OpenSans-Medium.woff2',
       weight: '500',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/OpenSans-Bold.woff2',
+      path: '../public/fonts/OpenSans-Bold.woff2',
       weight: '700',
       style: 'normal',
     },
