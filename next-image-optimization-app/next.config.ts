@@ -1,21 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  turbopack: {
-    root: __dirname,
-  },
   images: {
+    // Allow Cloudinary images
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
-        port: '',
         pathname: '/my-media-mayank/**',
       },
     ],
     formats: ['image/avif', 'image/webp'],
   },
 
-  // Add security headers
   async headers() {
     return [
       {
