@@ -20,7 +20,7 @@ export async function GET() {
             const m = f.match(/^(.+?)\.(jpg|jpeg|png|webp|avif)$/i);
             if (m) baseNames.add(m[1]);
         }
-        imageUrls = Array.from(baseNames).map((b) => `${baseUrl}/images/${b}`);
+        imageUrls = Array.from(baseNames).map((b) => `${baseUrl}images/${b}.avif`);
     } catch (e) {
         imageUrls = [];
     }
