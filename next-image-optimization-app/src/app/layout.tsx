@@ -66,6 +66,31 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${lato.variable} ${openSans.variable}`}>
+      <head>
+        {/* Preload fonts */}
+        <link
+          rel="preload"
+          href="/fonts/LatoSemibold.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/Lato-Regular.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+
+        {/* Cloudinary preconnect */}
+        <link
+          rel="preconnect"
+          href="https://res.cloudinary.com"
+          crossOrigin="anonymous"
+        />
+      </head>
+
       <body className="font-lato bg-background text-foreground">
         {children}
       </body>
