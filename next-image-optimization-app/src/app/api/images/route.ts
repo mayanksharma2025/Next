@@ -1,37 +1,28 @@
-import { NextResponse } from 'next/server';
-
-export const revalidate = 60; // ISR every 60 sec
+import { NextResponse } from "next/server";
 
 export async function GET() {
-    const CLOUDINARY_FOLDER = 'products'; // put your folder
-    const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
-    const API_KEY = process.env.CLOUDINARY_API_KEY;
-    const API_SECRET = process.env.CLOUDINARY_API_SECRET;
+    const url = `https://dummyjson.com/products?limit=10`;
 
-    const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/resources/image/upload?prefix=${CLOUDINARY_FOLDER}`,
-        {
-            headers: {
-                Authorization:
-                    "Basic " + Buffer.from(`${API_KEY}:${API_SECRET}`).toString("base64"),
-            },
-        }
-    );
+    try {
+        const res = await fetch(url, {
+            next: { revalidate: 60 }, // ISR from Cloudinary CDN
+        });
 
-    const data = await res.json();
+        if (!res.ok) throw new Error("Failed to fetch Cloudinary list");
 
-    const mapped = data.resources.map((img: any) => ({
-        id: img.asset_id,
-        public_id: img.public_id,
-        url: img.secure_url,
-        width: img.width,
-        height: img.height,
-        format: img.format,
-    }));
+        const data = await res.json();
 
-    return NextResponse.json(mapped, {
-        headers: {
-            "Cache-Control": "s-maxage=60, stale-while-revalidate",
-        },
-    });
+        const images = data.products.map((img: any, _i: any) => ({
+            id: _i,
+            url: img.images[0],
+            fallback: img.thumbnail,
+            width: img.dimensions.width,
+            height: img.dimensions.height,
+            format: img.category,
+        }));
+
+        return NextResponse.json(images);
+    } catch (e: any) {
+        return NextResponse.json({ error: e.message }, { status: 500 });
+    }
 }

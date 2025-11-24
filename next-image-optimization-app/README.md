@@ -1,3 +1,18 @@
+✅ Images fetched from an API (your own endpoint)
+✅ Next.js 16 App Router
+✅ Tailwind
+✅ Fonts optimized (Inter + Lato)
+✅ Perfect SEO (sitemap, robots, metadata)
+✅ Perfect caching (Edge middleware)
+✅ ISR
+✅ AVIF/WebP automatic optimization without manually storing files
+
+Below is the correct solution using only:
+
+✔ Your Cloudinary URLs
+✔ Next.js API Route (Server Component safe)
+✔ Next.js Image Optimization
+
 /scripts
 download-and-convert.js <-- downloads Cloudinary images -> /public/images, converts to avif & webp
 /public

@@ -1,28 +1,21 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 export const config = {
-    matcher: ["/fonts/:path*", "/gallery/:path*", "/cdn/:path*"],
+    matcher: ["/fonts/:path*", "/_next/image", "/images/:path*"],
 };
 
 export function middleware(req: NextRequest) {
     const res = NextResponse.next();
 
-    const url = req.nextUrl.pathname;
-
-    if (url.startsWith("/fonts")) {
-        res.headers.set(
-            "Cache-Control",
-            "public, max-age=31536000, immutable"
-        );
+    // Heavy caching for fonts
+    if (req.nextUrl.pathname.startsWith("/fonts")) {
+        res.headers.set("Cache-Control", "public, max-age=31536000, immutable");
     }
 
-    if (url.startsWith("/gallery") || url.startsWith("/cdn")) {
-        // console.log({ url })
-        res.headers.set(
-            "Cache-Control",
-            "public, max-age=31536000, stale-while-revalidate"
-        );
+    // Heavy caching for optimized images
+    if (req.nextUrl.pathname.startsWith("/_next/image")) {
+        res.headers.set("Cache-Control", "public, max-age=31536000, immutable");
     }
 
     return res;

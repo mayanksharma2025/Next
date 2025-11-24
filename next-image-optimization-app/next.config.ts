@@ -14,7 +14,13 @@ const nextConfig = {
         hostname: 'res.cloudinary.com',
         pathname: '/my-media-mayank/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn.dummyjson.com',
+        pathname: '/**', // allow all paths under this domain
+      },
     ],
+    // minimumCacheTTL: 60, // seconds
     formats: ['image/avif', 'image/webp'],
   },
   async rewrites() {
