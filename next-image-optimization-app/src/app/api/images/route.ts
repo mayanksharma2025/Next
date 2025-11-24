@@ -23,7 +23,9 @@ export async function GET() {
             body: JSON.stringify({
                 expression: "tags=products",
             }),
+            next: { revalidate: 60 },
         });
+        if (!res.ok) throw new Error("Failed to fetch Cloudinary list");
 
         const data = await res.json();
         const images = data.resources.map((img: any) => ({
