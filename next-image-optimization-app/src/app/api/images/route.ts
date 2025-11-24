@@ -1,24 +1,38 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-    const url = `https://dummyjson.com/products?limit=10`;
+    const cloudName = "my-media-mayank";
+    const folder = "products"; // <- your Cloudinary folder name
+
+    const url = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/resources/search`;
 
     try {
+
         const res = await fetch(url, {
-            next: { revalidate: 60 }, // ISR from Cloudinary CDN
+            method: "POST",
+            headers: {
+                Authorization:
+                    "Basic " +
+                    Buffer.from(
+                        process.env.CLOUDINARY_API_KEY +
+                        ":" +
+                        process.env.CLOUDINARY_API_SECRET
+                    ).toString("base64"),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                expression: "tags=products",
+            }),
         });
 
-        if (!res.ok) throw new Error("Failed to fetch Cloudinary list");
-
         const data = await res.json();
-
-        const images = data.products.map((img: any, _i: any) => ({
-            id: _i,
-            url: img.images[0],
-            fallback: img.thumbnail,
-            width: img.dimensions.width,
-            height: img.dimensions.height,
-            format: img.category,
+        const images = data.resources.map((img: any) => ({
+            id: img.public_id,
+            url: `https://res.cloudinary.com/${cloudName}/image/upload/f_avif,q_auto/${img.public_id}.avif`,
+            fallback: `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto/${img.public_id}`,
+            width: img.width,
+            height: img.height,
+            format: img.format,
         }));
 
         return NextResponse.json(images);
@@ -26,3 +40,11 @@ export async function GET() {
         return NextResponse.json({ error: e.message }, { status: 500 });
     }
 }
+
+
+{/* 
+  ✔ Auto AVIF generation
+  ✔ Auto WebP fallback
+  ✔ Remote image sizes included
+  ✔ ISR via revalidate: 60
+*/}

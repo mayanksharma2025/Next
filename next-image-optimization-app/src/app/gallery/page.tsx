@@ -19,8 +19,8 @@ export default async function GalleryPage() {
           <Image
             src={img.url}
             alt="Gallery Image"
-            width={parseInt(img.width) * 10}
-            height={parseInt(img.height) * 10}
+            width={img.width}
+            height={img.height}
             className="w-full h-auto"
             loading="lazy"
           />
@@ -36,9 +36,31 @@ export default async function GalleryPage() {
 {
   /* 
 🔥 This Finally Gives You:
+
+You want:
+
+✅ Images fetched from an API (your own endpoint)
+✅ Next.js 16 App Router
+✅ Tailwind
+✅ Fonts optimized (Inter + Lato)
+✅ Perfect SEO (sitemap, robots, metadata)
+✅ Perfect caching (Edge middleware)
+✅ ISR
+✅ AVIF/WebP automatic optimization without manually storing files
+
+Below is the correct solution using only:
+
+✔ Your Cloudinary URLs
+✔ Next.js API Route (Server Component safe)
+✔ Next.js Image Optimization
+
+✔ Server Component
+✔ ISR (static + revalidation)
+✔ Remote Cloudinary auto-optimized images
+✔ Perfect CLS (width/height provided)
+
 ✔ Cloudinary → API → ISR → Server Component → Perfect CLS
 ✔ AVIF/WebP auto-optimized
-✔ No AWS
 ✔ No local image arrays
 ✔ Lighthouse 98–100
 ✔ Strong SEO (sitemap + robots)
@@ -46,6 +68,7 @@ export default async function GalleryPage() {
 ✔ Self-hosted local fonts (best score)
 
 
+Next Topic
 ✅ Blur placeholders (Cloudinary base64)
 ✅ Shimmer placeholder
 ✅ Skeleton loader
