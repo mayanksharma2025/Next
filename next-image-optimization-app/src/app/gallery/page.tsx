@@ -1,65 +1,105 @@
-// app/gallery/page.tsx
-import fs from 'fs'
-import path from 'path'
 import Image from 'next/image'
-import React from 'react'
 
-export const revalidate = 3600 // ISR: re-generate page every hour
+// app/gallery/page.tsx
+export const revalidate = 60 // ISR every 60 seconds
 
 async function getImages() {
-  // Reads files from /public/images and returns a unique list of base names
-  const imagesDir = path.join(process.cwd(), 'public', 'images')
-  let files: string[] = []
-  try {
-    files = fs.readdirSync(imagesDir)
-  } catch (e) {
-    return []
-  }
-  // extract base names (without extension) and only keep unique sets that have at least jpg/webp/avif
-  const baseNames = new Set<string>()
-  for (const f of files) {
-    const match = f.match(/^(.+?)\.(jpg|jpeg|png|webp|avif)$/i)
-    if (match) baseNames.add(match[1])
-  }
-  return Array.from(baseNames)
+  const res = await fetch(`${process.env.SITE_URL}/api/images`, {
+    next: { revalidate: 60 },
+  })
+  if (!res.ok) return []
+  return res.json()
 }
 
 export default async function GalleryPage() {
   const images = await getImages()
 
   return (
-    <main className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-semibold mb-6">
-        Gallery — pre-generated AVIF/WebP
-      </h1>
+    <main className="grid grid-cols-2 md:grid-cols-3 gap-4 p-6">
+      {images.map((img: any) => {
+        const base = img.public_id.split('/').pop()
+        const urlBase = img.url.replace(/\.(jpg|jpeg|png)$/i, '') // strip extension
 
-      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {images.map((base) => {
-          // Request the image without extension — next.config.js rewrites will serve avif/webp/jpg per Accept
-          const src = `/images/${base}`
-          return (
-            <article key={base} className="rounded overflow-hidden shadow-sm">
-              <picture>
-                {/* Fallback logic handled by rewrites too, but keep <Image> as final */}
-                <source srcSet={`${src}.avif`} type="image/avif" />
-                <source srcSet={`${src}.webp`} type="image/webp" />
-                {/* Leave img tag to be rendered by next/image below */}
-                <Image
-                  src={src}
-                  alt={base}
-                  width={1200}
-                  height={800}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-              </picture>
-              {JSON.stringify(src)}
-              <div className="p-3">
-                <h3 className="font-medium">{base}</h3>
-              </div>
-            </article>
-          )
-        })}
-      </section>
+        return (
+          <picture key={img.id}>
+            {/* AVIF */}
+            <source srcSet={`${urlBase}.avif`} type="image/avif" />
+            {/* WebP */}
+            <source srcSet={`${urlBase}.webp`} type="image/webp" />
+            {/* Fallback */}
+            <Image
+              src={img.url}
+              alt={base}
+              width={img.width}
+              height={img.height}
+              className="rounded-lg shadow"
+              loading="lazy"
+              style={{ width: '100%', height: 'auto' }}
+            />
+          </picture>
+        )
+      })}
     </main>
   )
+}
+
+{
+  /*
+1️⃣ Gallery Page (app/gallery/page.tsx)
+
+   Ye page Cloudinary se images fetch karta hai (/api/images se).
+
+   Har image ke liye <picture> tag use kiya hai:
+
+   Browser pehle AVIF check karta hai, agar nahi hai → WebP → nahi toh original JPG/PNG.
+
+   loading="lazy" se images tabhi load hoti hain jab user scroll kare.
+
+   revalidate = 60 → ISR: page 60 sec ke baad automatically refresh ho sakta hai.
+
+   Result: Fast, modern format images + fallback + lazy loading.
+
+2️⃣ API Route (app/api/images/route.ts)
+
+   Cloudinary API ko call karta hai aur JSON return karta hai.
+
+   Har image ka info: id, public_id, url, width, height, format.
+
+   Cache-Control header lagaya hai: browser/CDN 60 sec tak cache kare.
+
+   Result: Gallery ke liye JSON data ready.
+
+3️⃣ Middleware (middleware.ts)
+
+   Cache-Control headers set karta hai /gallery aur /cdn ke liye.
+
+   Fonts ko bhi 1 saal (immutable) cache karne ke liye headers set kiye.
+
+   Result: Browser/edge caching improve, page aur images fast load.
+
+4️⃣ Next Config (next.config.js)
+
+   Cloudinary images ko allow kiya hai remote pattern me.
+
+   AVIF/WebP rewrites bhi yahin define hain (agar browser support kare toh automatically serve ho).
+
+   Headers aur rewrites ka proper setup:
+
+   Images: 7 din cache (immutable)
+
+   API proxy: /api/users → external API
+
+Result: Production ready, modern image formats, caching, rewrites sab handle ho gaye.
+
+💡 Summary:
+
+   API → Cloudinary se data fetch karta hai.
+
+   Gallery page → <picture> + lazy load → browser format ke hisaab se serve karta hai.
+
+   Middleware → caching headers lagata hai.
+
+   Config → Cloudinary images allow + rewrites + cache headers.
+   
+ */
 }
