@@ -1,34 +1,36 @@
 // app/api/products/route.ts
 import { NextResponse } from "next/server";
+import { getBlurData } from "../../product-server/lib/getBlur";
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
 
-    const limit = Number(searchParams.get("limit") ?? 12);
-    const cursor = Number(searchParams.get("cursor") ?? 0);
+    const limit = Number(searchParams.get("limit") || 12);
+    const cursor = Number(searchParams.get("cursor") || 0);
+    const search = searchParams.get("search")?.toLowerCase() || "";
+    const sort = searchParams.get("sort") || "";
+    const category = searchParams.get("category")?.toLowerCase() || "all";
 
-    const search = (searchParams.get("search") ?? "").toLowerCase().trim();
-    const sort = searchParams.get("sort") ?? "";
-    const category = searchParams.get("category") ?? "";
-
-    const res = await fetch("https://dummyjson.com/products?limit=100", {
-        cache: "no-store",
-    });
+    // Fetch all products
+    const res = await fetch("https://dummyjson.com/products?limit=100");
     const data = await res.json();
-    let products = Array.isArray(data.products) ? data.products : [];
+    let products = data.products;
 
+    // --- FILTER BY CATEGORY ---
     if (category && category !== "all") {
         products = products.filter((p: any) =>
-            (p.category || "").toLowerCase().includes(category.toLowerCase())
+            p.category.toLowerCase().includes(category)
         );
     }
 
+    // --- SEARCH BY TITLE ---
     if (search) {
         products = products.filter((p: any) =>
-            (p.title || "").toLowerCase().includes(search)
+            p.title.toLowerCase().includes(search)
         );
     }
 
+    // --- SORT ---
     switch (sort) {
         case "price-asc":
             products.sort((a: any, b: any) => a.price - b.price);
@@ -44,22 +46,29 @@ export async function GET(req: Request) {
             break;
     }
 
+    // --- PAGINATION ---
     const paginated = products.slice(cursor, cursor + limit);
 
+    // --- GENERATE BLUR ---
+    const productsWithBlur = await Promise.all(
+        paginated.map(async (p: any) => {
+            const blur = await getBlurData(p.thumbnail);
+            return {
+                id: p.id,
+                src: p.thumbnail,
+                width: 600,
+                height: 600,
+                blur: blur || undefined, // fallback
+                title: p.title,
+                price: p.price,
+                description: p.description,
+                category: p.category,
+            };
+        })
+    );
+
     return NextResponse.json({
-        images: paginated.map((p: any) => ({
-            id: p.id,
-            src: p.thumbnail,
-            width: 600,
-            height: 600,
-            // we return thumbnail (server page will produce proper blurDataURL)
-            blur: p.thumbnail,
-            title: p.title,
-            price: p.price,
-            category: p.category,
-            description: p.description,
-            discountPercentage: p.discountPercentage,
-        })),
+        products: productsWithBlur,
         nextCursor: cursor + limit < products.length ? cursor + limit : null,
     });
 }

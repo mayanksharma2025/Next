@@ -1,7 +1,8 @@
+// app/products/page.tsx
 import FiltersServer from './components/FiltersServer'
 import ProductsList from './components/ProductsList'
-import InfiniteScrollClient from './components//InfiniteScrollClient'
-import { Suspense } from 'react'
+import PaginationServer from './components/PaginationServer'
+import SkeletonGrid from './components/SkeletonGrid'
 
 export default async function Page({ searchParams }: any) {
   const params =
@@ -17,29 +18,31 @@ export default async function Page({ searchParams }: any) {
 
   const baseURL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
-  const url =
+  const res = await fetch(
     `${baseURL}/api/products?` +
-    new URLSearchParams({
-      limit: String(limit),
-      cursor: String(cursor),
-      search,
-      sort,
-      category,
-    }).toString()
+      new URLSearchParams({
+        limit: String(limit),
+        cursor: String(cursor),
+        search,
+        sort,
+        category,
+      }).toString(),
+    { cache: 'no-store' }
+  )
 
-  const res = await fetch(url, { cache: 'no-store' })
   const data = await res.json()
 
   return (
-    <main className="p-6 max-w-6xl mx-auto space-y-8">
-      <Suspense fallback={<div>Loading filters…</div>}>
-        <FiltersServer search={search} sort={sort} category={category} />
-      </Suspense>
+    <main className="p-6 max-w-6xl mx-auto">
+      <FiltersServer search={search} sort={sort} category={category} />
 
-      <ProductsList products={data.images} />
+      {/* SSR Products */}
+      <ProductsList products={data.products} />
 
-      <InfiniteScrollClient
-        initialNextCursor={data.nextCursor}
+      {/* SSR Pagination */}
+      <PaginationServer
+        page={page}
+        nextCursor={data.nextCursor}
         search={search}
         sort={sort}
         category={category}
@@ -51,26 +54,9 @@ export default async function Page({ searchParams }: any) {
 {
   /* 
 
-  We will add:
-
-1. SSR Shimmer Placeholder Support (Real blurDataURL)
-2. SEO-Friendly First Page (Metadata + Prefetch)
-3. Smart Infinite Scroll (Server → Client boundary only where needed)
-
-
-✅ STEP — FULL POLISHED PAGE WITH SERVER RENDERING + INFINITE SCROLL
-✔ Server fetch for first page
-✔ Infinite scroll AFTER page load
-✔ Total client JS only: 30 lines
-
-
-🔥 RESULT
-✔ First load: 100% Server Components
-✔ Image shimmer works on SSR
-✔ SEO-friendly
-✔ Infinite scroll works cleanly
-✔ Only 1 tiny client component (30 lines)
-✔ Your previous errors 100% fixed
-
+✅ Smooth fade-in animation for images
+✅ Skeleton grid matching SSR shimmer
+✅ URL pagination updates (/?page=2) using ONLY server components
+✅ Real blurDataURL using plaiceholder (recommended by Vercel)
 */
 }
