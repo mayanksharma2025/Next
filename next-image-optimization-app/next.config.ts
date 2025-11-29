@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  productionBrowserSourceMaps: false,
+  experimental: {
+    serverSourceMaps: false,
+  },
+  // experimental: { webpackBuildWorker: true },
   // experimental: {
   //   appDir: true,
   //   images: {
