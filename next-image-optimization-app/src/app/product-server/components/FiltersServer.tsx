@@ -1,15 +1,13 @@
-// app/components/FiltersServer.tsx
-interface FiltersServerProps {
-  search?: string
-  sort?: string
-  category?: string
-}
-
+// app/products/components/FiltersServer.tsx
 export default function FiltersServer({
   search = '',
   sort = '',
   category = 'all',
-}: FiltersServerProps) {
+}: {
+  search?: string
+  sort?: string
+  category?: string
+}) {
   const categories = [
     'all',
     'smartphones',
@@ -38,7 +36,6 @@ export default function FiltersServer({
       method="get"
       className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6"
     >
-      {/* Search Input */}
       <input
         type="text"
         name="search"
@@ -47,7 +44,6 @@ export default function FiltersServer({
         className="border rounded-lg p-2 w-full sm:w-64"
       />
 
-      {/* Category Select */}
       <select
         name="category"
         defaultValue={category}
@@ -60,7 +56,6 @@ export default function FiltersServer({
         ))}
       </select>
 
-      {/* Sort Select */}
       <select
         name="sort"
         defaultValue={sort}

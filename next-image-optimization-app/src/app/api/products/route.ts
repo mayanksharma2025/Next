@@ -15,17 +15,17 @@ export async function GET(req: Request) {
         cache: "no-store",
     });
     const data = await res.json();
-    let products = data.products;
+    let products = Array.isArray(data.products) ? data.products : [];
 
     if (category && category !== "all") {
         products = products.filter((p: any) =>
-            p.category.toLowerCase().includes(category.toLowerCase())
+            (p.category || "").toLowerCase().includes(category.toLowerCase())
         );
     }
 
     if (search) {
         products = products.filter((p: any) =>
-            p.title.toLowerCase().includes(search)
+            (p.title || "").toLowerCase().includes(search)
         );
     }
 
@@ -47,11 +47,12 @@ export async function GET(req: Request) {
     const paginated = products.slice(cursor, cursor + limit);
 
     return NextResponse.json({
-        products: paginated.map((p: any) => ({
+        images: paginated.map((p: any) => ({
             id: p.id,
             src: p.thumbnail,
             width: 600,
             height: 600,
+            // we return thumbnail (server page will produce proper blurDataURL)
             blur: p.thumbnail,
             title: p.title,
             price: p.price,
