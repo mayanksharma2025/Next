@@ -5,7 +5,7 @@ export const config = {
     matcher: ["/fonts/:path*", "/_next/image", "/images/:path*"],
 };
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
     const res = NextResponse.next();
 
     // Heavy caching for fonts
