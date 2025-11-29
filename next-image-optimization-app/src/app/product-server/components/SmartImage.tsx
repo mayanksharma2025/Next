@@ -11,7 +11,7 @@ interface SmartImageProps {
   blurDataURL?: string
   alt?: string
 }
-
+// ✅ STEP 2 — SEO + PREFETCH + SERVER IMAGE COMPONENT
 export default function SmartImage({
   src,
   width,
