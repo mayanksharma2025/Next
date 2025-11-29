@@ -1,3 +1,23 @@
+let's add a professional-grade Skeleton Loader (shimmer) that fades into the real image when it finishes loading.
+
+✔ Skeleton works with
+
+Next.js App Router
+
+Server Components
+
+Cloudinary images via API
+
+Blur placeholder
+
+No CLS
+
+Tailwind only (no MUI, no libraries)
+
+✔ Optional:
+
+Skeleton shows instantly → Blur placeholder → Real image fades in.
+
 ✅ Images fetched from an API (your own endpoint)
 ✅ Next.js 16 App Router
 ✅ Tailwind
