@@ -1,34 +1,11 @@
-import Image from 'next/image'
-import SmartImage from './components/SmartImage'
+import InfiniteGallery from './components/InfiniteGallery'
 
-export const revalidate = 60 // ISR
+export const revalidate = 60
 
-async function getImages() {
-  const res = await fetch(`${process.env.SITE_URL}/api/images`, {
-    next: { revalidate: 60 },
-  })
-  return res.json()
-}
-
-export default async function GalleryPage() {
-  const images = await getImages()
-
+export default function GalleryPage() {
   return (
-    <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-      {images.map((img: any) => (
-        <div key={img.id} className="rounded-xl overflow-hidden shadow">
-          <SmartImage
-            src={img.url}
-            alt=""
-            width={img.width}
-            height={img.height}
-            blurDataURL={img.blurData}
-          />
-          <p className="font-opensans font-medium text-2xl text-teal-400">
-            {img.id}
-          </p>
-        </div>
-      ))}
+    <main className="p-6">
+      <InfiniteGallery />
     </main>
   )
 }
@@ -42,8 +19,38 @@ export default async function GalleryPage() {
 🔥 Real image fades in
 🔥 Perfect CLS, perfect Lighthouse
 🔥 ISR static + revalidate
-🔥 No AWS, no local DB
 🔥 100% Cloudinary-driven
+
+now we add Infinite Scroll using:
+
+✔ Server Components for initial load
+✔ API with pagination (Cloudinary paginated API)
+✔ Client Component for infinite scroll
+✔ Smooth Skeleton + Blur placeholders
+✔ No AWS / No local DB
+✔ Fully Cloudinary-powered
+
+
+Infinite Scroll Client Component
+
+This is the main part.
+It:
+✔ Loads initial images
+✔ Observes scroll bottom
+✔ Calls API to fetch next batch
+✔ Shows skeleton while loading
+✔ Uses SmartImage (blur + fade)
+
+
+Next Feature?
+
+Choose:
+
+1️⃣ Individual Image Page (/gallery/[id]) with SEO
+2️⃣ Cloudinary Responsive Breakpoints (320, 640, 1280)
+3️⃣ Lazy hydration optimization (React.use + RSC)
+4️⃣ Scroll restoration + URL cursor states
+5️⃣ Tag Filters + Search
 
 */
 }

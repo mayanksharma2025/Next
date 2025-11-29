@@ -19,25 +19,20 @@ export default function SmartImage({
   width,
   height,
 }: SmartImageProps) {
-  const [loaded, setLoaded] = useState(false)
+  const aspectRatio = (height / width) * 100
 
   return (
-    <div className="relative">
-      {!loaded && (
-        <div className="absolute inset-0 animate-pulse bg-gray-200 rounded-xl" />
-      )}
-
+    <div
+      className="relative w-full rounded-xl overflow-hidden bg-gray-200 dark:bg-gray-700"
+      style={{ paddingBottom: `${aspectRatio}%` }}
+    >
       <Image
         src={src as any}
         alt={alt}
-        width={width}
-        height={height}
-        blurDataURL={blurDataURL}
+        fill
         placeholder="blur"
-        className={`w-full h-auto rounded-xl transition-opacity duration-700 ${
-          loaded ? 'opacity-100' : 'opacity-0'
-        }`}
-        onLoad={() => setLoaded(true)}
+        blurDataURL={blurDataURL}
+        className="object-cover"
       />
     </div>
   )

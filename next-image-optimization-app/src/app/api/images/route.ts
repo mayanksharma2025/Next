@@ -1,68 +1,66 @@
 import { NextResponse } from "next/server";
 
-export async function GET() {
-    const cloudName = "my-media-mayank";
-    const folder = "products"; // <- your Cloudinary folder name
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url);
+    const cursor = searchParams.get("cursor") ?? "";
+    const limit = Number(searchParams.get("limit") ?? "12");
 
-    const url = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/resources/search`;
+    const cloudName = process.env.CLOUD_NAME!;
+    const apiKey = process.env.CLOUD_API_KEY!;
+    const apiSecret = process.env.CLOUD_API_SECRET!;
+    const folder = "products";
+
+    const url = `https://api.cloudinary.com/v1_1/${cloudName}/resources/search`;
+
+    const body = {
+        expression: "tags=products",
+        // expression: `folder:${folder} AND resource_type:image`,
+        max_results: limit,
+        next_cursor: cursor || undefined,
+    };
 
     try {
-
         const res = await fetch(url, {
             method: "POST",
             headers: {
                 Authorization:
-                    "Basic " +
-                    Buffer.from(
-                        process.env.CLOUDINARY_API_KEY +
-                        ":" +
-                        process.env.CLOUDINARY_API_SECRET
-                    ).toString("base64"),
+                    "Basic " + Buffer.from(`${apiKey}:${apiSecret}`).toString("base64"),
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-                expression: "tags=products",
-            }),
-            next: { revalidate: 60 }
+            body: JSON.stringify(body),
         });
-        if (!res.ok) throw new Error("Failed to fetch Cloudinary list");
 
         const data = await res.json();
+
         const images = await Promise.all(
             data.resources.map(async (img: any) => {
-                const publicId = img.public_id;
+                const id = img.public_id;
 
-                // 1) Full AVIF main image
-                const mainUrl = `https://res.cloudinary.com/${cloudName}/image/upload/f_avif,q_auto/${publicId}.avif`;
+                const src = `https://res.cloudinary.com/${cloudName}/image/upload/f_avif,q_auto/${id}.avif`;
 
-                // 2) Tiny blurred image (low quality, super small)
-                const blurUrl = `https://res.cloudinary.com/${cloudName}/image/upload/e_blur:1000,q_1,w_20/${publicId}.jpg`;
+                // blur image
+                const blurUrl = `https://res.cloudinary.com/${cloudName}/image/upload/e_blur:1000,q_1,w_20/${id}.jpg`;
 
-                // 3) Convert blur image to Base64
                 const blurRes = await fetch(blurUrl);
-                const blurBuffer = await blurRes.arrayBuffer();
-                const blurBase64 = Buffer.from(blurBuffer).toString("base64");
+                const blurBase64 = Buffer.from(await blurRes.arrayBuffer()).toString(
+                    "base64"
+                );
 
                 return {
-                    id: publicId,
-                    url: mainUrl,
-                    blurData: `data:image/jpeg;base64,${blurBase64}`,
+                    id,
+                    src,
+                    blur: `data:image/jpeg;base64,${blurBase64}`,
                     width: img.width,
                     height: img.height,
                 };
             })
         );
 
-        return NextResponse.json(images);
+        return NextResponse.json({
+            images,
+            nextCursor: data.next_cursor ?? null,
+        });
     } catch (e: any) {
         return NextResponse.json({ error: e.message }, { status: 500 });
     }
 }
-
-
-{/* 
-  ✔ Auto AVIF generation
-  ✔ Auto WebP fallback
-  ✔ Remote image sizes included
-  ✔ ISR via revalidate: 60
-*/}
