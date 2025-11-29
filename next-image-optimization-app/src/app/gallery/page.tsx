@@ -18,11 +18,12 @@ export default async function GalleryPage() {
         <div key={img.id} className="rounded-xl overflow-hidden shadow">
           <Image
             src={img.url}
-            alt="Gallery Image"
+            alt=""
             width={img.width}
             height={img.height}
-            className="w-full h-auto"
-            loading="lazy"
+            placeholder="blur"
+            blurDataURL={img.blurData}
+            className="w-full h-auto object-cover transition-all duration-700"
           />
           <p className="font-opensans font-medium text-2xl text-teal-400">
             {img.id}
