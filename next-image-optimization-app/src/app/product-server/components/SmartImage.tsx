@@ -37,7 +37,7 @@ export default function SmartImage({
         src={src}
         alt={alt}
         fill
-        onLoadingComplete={() => setLoaded(true)}
+        onLoad={() => setLoaded(true)}
         placeholder={blurDataURL ? 'blur' : undefined}
         blurDataURL={blurDataURL}
         className={`object-cover transition-opacity duration-300 ${
