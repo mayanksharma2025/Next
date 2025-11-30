@@ -1,15 +1,34 @@
-'use client'
+// app/page.js
+// 2. SSR (Server-Side Rendering) with fetch in App Router
+// Next.js 16 encourages server components. Use export const revalidate = 0 for SSR (always fresh).
 
-import { useEffect, useState } from 'react'
+export const revalidate = 0 // SSR
 
-export default function Home() {
-  const [data, setData] = useState<{ message: string } | null>(null)
+async function getData() {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts', {
+    cache: 'no-store',
+  })
+  return res.json()
+}
 
-  useEffect(() => {
-    fetch('/api/hello')
-      .then((res) => res.json())
-      .then(setData)
-  }, [])
+export default async function Page() {
+  const posts = await getData()
 
-  return <div>{data ? data.message : 'Loading...'}</div>
+  return (
+    <div>
+      <h1>Posts (SSR)</h1>
+      <ul>
+        {posts.map((post: any) => (
+          <li key={post.id}>{post.title}</li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+{
+  /*
+  ✅ Notes:
+   cache: 'no-store' ensures fresh data on every request (SSR).
+ */
 }
