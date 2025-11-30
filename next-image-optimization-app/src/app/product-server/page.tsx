@@ -42,9 +42,9 @@ export default async function Page({ searchParams }: any) {
       <InfiniteScrollClient
         initialNextCursor={data.nextCursor ?? null}
         initialImages={[]}
-        search={search}
-        sort={sort}
-        category={category}
+        // search={search}
+        // sort={sort}
+        // category={category}
       />
     </main>
   )
