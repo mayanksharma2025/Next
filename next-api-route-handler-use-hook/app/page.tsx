@@ -1,25 +1,22 @@
-// app/page.js
-// Use revalidate to define a cache duration.
-export const revalidate = 200
-export const dynamic = 'force-static'
+export const revalidate = 280 // ISR: regenerate every 280s
+export const dynamic = 'force-static' // Force static page
 
 async function getData() {
   const res = await fetch('https://jsonplaceholder.typicode.com/posts', {
-    cache: 'force-cache', // 🔥 important
-    // next: { revalidate: 200 }, // ✔ match with page revalidate
+    next: { revalidate: 280 }, // Match page revalidate
+    cache: 'force-cache', // Force static fetch
   })
   return res.json()
 }
 
 export default async function Page() {
   const posts = await getData()
-  const time = new Date().toISOString() // timestamp
+  const time = new Date().toISOString()
 
   return (
     <div>
       <h1>Posts (ISR)</h1>
       <p>Page generated at: {time}</p>
-
       <ul>
         {posts.map((post: any) => (
           <li key={post.id}>{post.title}</li>
@@ -29,15 +26,26 @@ export default async function Page() {
   )
 }
 
-// ✅ Notes:
+{
+  /* 
+  npm run start
 
-// Page is statically generated, but refreshed after revalidate seconds.
+  Open browser → check timestamp
 
-// page revalidate: 280 sec
-// fetch revalidate: 60 sec
-// dynamic = force-static
-// If ANY fetch has revalidate < page revalidate
-// => Route becomes dynamic
-// then its cause timestamp changes on refresh par change.
+  Refresh immediately → timestamp same
 
-// set NEXT_DEBUG_FUNCTIONS=1 && npm run build
+  Wait 280s → refresh → timestamp updates
+
+
+✅ Why this works:
+
+Layout static → child page static
+
+Page dynamic = 'force-static' → static render forced
+
+Fetch uses next: { revalidate: 280 } → matches page ISR
+
+Browser will serve cached static page until 280s expire → ISR triggers regeneration
+
+*/
+}
