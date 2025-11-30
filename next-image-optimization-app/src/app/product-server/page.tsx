@@ -1,13 +1,13 @@
 // app/products/page.tsx
-import FiltersServer from './components/FiltersServer'
+import FiltersServer from './components/FiltersServer' // or FiltersClientDebounced
 import ProductsList from './components/ProductsList'
-import PaginationServer from './components/PaginationServer'
+import InfiniteScrollClient from './components/InfiniteScrollClient'
 import SkeletonGrid from './components/SkeletonGrid'
+import FiltersClientDebounced from './components/FiltersClientDebounced'
 
 export default async function Page({ searchParams }: any) {
   const params =
     searchParams instanceof Promise ? await searchParams : searchParams
-
   const page = Number(params?.page ?? 1)
   const search = params?.search ?? ''
   const sort = params?.sort ?? ''
@@ -16,33 +16,32 @@ export default async function Page({ searchParams }: any) {
   const limit = 12
   const cursor = (page - 1) * limit
 
-  const baseURL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-
-  const res = await fetch(
+  const baseURL = process.env.SITE_URL || 'http://localhost:3000'
+  const url =
     `${baseURL}/api/products?` +
-      new URLSearchParams({
-        limit: String(limit),
-        cursor: String(cursor),
-        search,
-        sort,
-        category,
-      }).toString(),
-    { cache: 'no-store' }
-  )
+    new URLSearchParams({
+      limit: String(limit),
+      cursor: String(cursor),
+      search,
+      sort,
+      category,
+    }).toString()
 
+  const res = await fetch(url, { cache: 'no-store' })
   const data = await res.json()
 
   return (
-    <main className="p-6 max-w-6xl mx-auto">
-      <FiltersServer search={search} sort={sort} category={category} />
+    <main className="p-6 max-w-6xl mx-auto space-y-8">
+      {/* choose FiltersServer or FiltersClientDebounced */}
+      {/* <FiltersServer search={search} sort={sort} category={category} /> */}
+      <FiltersClientDebounced />
 
-      {/* SSR Products */}
-      <ProductsList products={data.products} />
-
-      {/* SSR Pagination */}
-      <PaginationServer
-        page={page}
-        nextCursor={data.nextCursor}
+      {/* server-rendered first page */}
+      <ProductsList products={data.images || []} />
+      {/* client tiny infinite appender (keeps 90% server) */}
+      <InfiniteScrollClient
+        initialNextCursor={data.nextCursor ?? null}
+        initialImages={[]}
         search={search}
         sort={sort}
         category={category}

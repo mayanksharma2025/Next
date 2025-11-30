@@ -5,32 +5,31 @@ import { getBlurData } from "../../product-server/lib/getBlur";
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
 
-    const limit = Number(searchParams.get("limit") || 12);
-    const cursor = Number(searchParams.get("cursor") || 0);
-    const search = searchParams.get("search")?.toLowerCase() || "";
-    const sort = searchParams.get("sort") || "";
-    const category = searchParams.get("category")?.toLowerCase() || "all";
+    const limit = Number(searchParams.get("limit") ?? 12);
+    const cursor = Number(searchParams.get("cursor") ?? 0);
+    const search = (searchParams.get("search") ?? "").toLowerCase().trim();
+    const sort = searchParams.get("sort") ?? "";
+    const category = (searchParams.get("category") ?? "all").toLowerCase();
 
-    // Fetch all products
+    // fetch source list
     const res = await fetch("https://dummyjson.com/products?limit=100");
+    if (!res.ok) {
+        return NextResponse.json({ images: [], nextCursor: null, error: `source fetch failed ${res.status}` }, { status: 502 });
+    }
     const data = await res.json();
-    let products = data.products;
+    let products = Array.isArray(data.products) ? data.products : [];
 
-    // --- FILTER BY CATEGORY ---
+    // FILTER: category
     if (category && category !== "all") {
-        products = products.filter((p: any) =>
-            p.category.toLowerCase().includes(category)
-        );
+        products = products.filter((p: any) => (p.category ?? "").toLowerCase().includes(category));
     }
 
-    // --- SEARCH BY TITLE ---
+    // SEARCH: title (simple)
     if (search) {
-        products = products.filter((p: any) =>
-            p.title.toLowerCase().includes(search)
-        );
+        products = products.filter((p: any) => (p.title ?? "").toLowerCase().includes(search));
     }
 
-    // --- SORT ---
+    // SORT
     switch (sort) {
         case "price-asc":
             products.sort((a: any, b: any) => a.price - b.price);
@@ -46,19 +45,23 @@ export async function GET(req: Request) {
             break;
     }
 
-    // --- PAGINATION ---
+    // PAGINATION (slice after filter & sort)
     const paginated = products.slice(cursor, cursor + limit);
 
-    // --- GENERATE BLUR ---
-    const productsWithBlur = await Promise.all(
+    // Generate blur data for each item (safe, with fallback)
+    const images = await Promise.all(
         paginated.map(async (p: any) => {
-            const blur = await getBlurData(p.thumbnail);
+            const blur = await getBlurData(p.thumbnail).catch((e) => {
+                console.error("getBlurData error for", p.thumbnail, e);
+                return null;
+            });
+
             return {
                 id: p.id,
                 src: p.thumbnail,
                 width: 600,
                 height: 600,
-                blur: blur || undefined, // fallback
+                blur: blur ?? undefined,
                 title: p.title,
                 price: p.price,
                 description: p.description,
@@ -68,7 +71,7 @@ export async function GET(req: Request) {
     );
 
     return NextResponse.json({
-        products: productsWithBlur,
+        images,
         nextCursor: cursor + limit < products.length ? cursor + limit : null,
     });
 }
