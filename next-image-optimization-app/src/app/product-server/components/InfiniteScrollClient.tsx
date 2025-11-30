@@ -2,73 +2,34 @@
 
 import { useEffect, useRef, useState } from 'react'
 import SmartImage from './SmartImage'
-import { useSearchParams } from 'next/navigation'
 
 export default function InfiniteScrollClient({
   initialNextCursor,
   initialImages = [],
+  search = '',
+  sort = '',
+  category = 'all',
 }: {
   initialNextCursor: number | null
   initialImages?: any[]
+  search?: string
+  sort?: string
+  category?: string
 }) {
-  const params = useSearchParams()
-  const search = params.get('search') || ''
-  const sort = params.get('sort') || ''
-  const category = params.get('category') || 'all'
-
-  const [cursor, setCursor] = useState<number | null>(initialNextCursor)
-  const [images, setImages] = useState<any[]>(initialImages)
+  const [cursor, setCursor] = useState(initialNextCursor)
+  const [images, setImages] = useState(initialImages)
   const [loading, setLoading] = useState(false)
-  const [resetting, setResetting] = useState(false)
-
   const loaderRef = useRef<HTMLDivElement | null>(null)
-  const observerRef = useRef<IntersectionObserver | null>(null)
 
-  // ⭐ FULL RESET WHEN FILTERS CHANGE
-
+  // Reset when filters change
   useEffect(() => {
-    setResetting(true)
-
     setImages([])
-
-    // ✅ IMPORTANT: restart from initialNextCursor, NOT 0
     setCursor(initialNextCursor)
+  }, [search, sort, category, initialNextCursor])
 
-    setLoading(false)
-
-    if (observerRef.current) observerRef.current.disconnect()
-
-    const timer = setTimeout(() => {
-      setResetting(false)
-    }, 10)
-
-    return () => clearTimeout(timer)
-  }, [search, sort, category])
-
-  // useEffect(() => {
-  //   setResetting(true)
-  //   setImages([])
-  //   setCursor(0) // restart from 0 for new search
-  //   setLoading(false)
-
-  //   // Clear old observer immediately
-  //   if (observerRef.current) observerRef.current.disconnect()
-
-  //   // Small delay ensures state is applied before loading starts
-  //   const timer = setTimeout(() => {
-  //     setResetting(false)
-  //   }, 50)
-
-  //   return () => clearTimeout(timer)
-  // }, [search, sort, category])
-
-  // Load more items
   const loadMore = async () => {
-    if (resetting) return // IMPORTANT: stops race condition
-    if (cursor === null || loading) return
-
+    if (!cursor || loading) return
     setLoading(true)
-
     try {
       const params = new URLSearchParams({
         cursor: String(cursor),
@@ -77,70 +38,59 @@ export default function InfiniteScrollClient({
         sort,
         category,
       })
-
       const res = await fetch(`/api/products?${params.toString()}`)
       const json = await res.json()
-
-      const newItems = Array.isArray(json.images) ? json.images : []
-
-      setImages((prev) => [...prev, ...newItems])
-
+      setImages((prev) => [
+        ...prev,
+        ...(Array.isArray(json.images) ? json.images : []),
+      ])
       setCursor(json.nextCursor ?? null)
+    } catch (err) {
+      console.error(err)
     } finally {
       setLoading(false)
     }
   }
 
-  // ⭐ Re-attach observer AFTER reset finishes
+  // Intersection observer
   useEffect(() => {
-    if (!loaderRef.current || resetting) return
-
-    // kill old observer
-    if (observerRef.current) observerRef.current.disconnect()
-
-    observerRef.current = new IntersectionObserver(
+    if (!loaderRef.current) return
+    const obs = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) loadMore()
       },
       { rootMargin: '300px' }
     )
-
-    observerRef.current.observe(loaderRef.current)
-
-    return () => observerRef.current?.disconnect()
-  }, [cursor, resetting])
+    obs.observe(loaderRef.current)
+    return () => obs.disconnect()
+  }, [cursor, search, sort, category])
 
   return (
     <>
-      {images.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full mt-6">
-          {images.map((p) => (
-            <div
-              key={`client-${p.id}`}
-              className="border rounded-xl overflow-hidden shadow p-2"
-            >
-              <SmartImage
-                src={p.src}
-                blur={p.blur}
-                width={600}
-                height={600}
-                alt={p.title}
-              />
-              <div className="p-4">
-                <h3 className="font-semibold">{p.title}</h3>
-                <p className="text-sm text-gray-500">${p.price}</p>
-              </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full mt-6">
+        {images.map((p) => (
+          <div
+            key={`client-${p.id}`}
+            className="border rounded-xl overflow-hidden shadow p-2"
+          >
+            <SmartImage
+              src={p.src}
+              blur={p.blur}
+              width={600}
+              height={600}
+              alt={p.title}
+            />
+            <div className="p-4">
+              <h3 className="font-semibold">{p.title}</h3>
+              <p className="text-sm text-gray-500">${p.price}</p>
             </div>
-          ))}
-        </div>
-      )}
-
+          </div>
+        ))}
+      </div>
       <div ref={loaderRef} className="py-8 text-center">
-        {resetting
-          ? ''
-          : loading
+        {loading
           ? 'Loading…'
-          : cursor !== null
+          : cursor
           ? 'Scroll to load more'
           : 'No more items'}
       </div>

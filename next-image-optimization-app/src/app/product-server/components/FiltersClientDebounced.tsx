@@ -1,72 +1,95 @@
-// app/products/components/FiltersClientDebounced.tsx
 'use client'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
 
-export default function FiltersClientDebounced({
-  initialSearch = '',
-  initialSort = '',
-  initialCategory = 'all',
-}: {
-  initialSearch?: string
-  initialSort?: string
-  initialCategory?: string
-}) {
+import { useEffect, useState, useRef } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+
+export default function FiltersClientDebounced() {
   const router = useRouter()
   const searchParams = useSearchParams()
+
+  // Read URL params on initial load
+  const initialSearch = searchParams.get('search') ?? ''
+  const initialSort = searchParams.get('sort') ?? ''
+  const initialCategory = searchParams.get('category') ?? 'all'
+
   const [search, setSearch] = useState(initialSearch)
   const [sort, setSort] = useState(initialSort)
   const [category, setCategory] = useState(initialCategory)
 
+  const firstRender = useRef(true)
+
+  // Debounced URL update on changes
   useEffect(() => {
-    const t = setTimeout(() => {
-      const params = new URLSearchParams(
-        Object.fromEntries(searchParams.entries())
-      )
-      if (search) params.set('search', search)
-      else params.delete('search')
-      if (sort) params.set('sort', sort)
-      else params.delete('sort')
-      if (category) params.set('category', category)
-      else params.delete('category')
-      params.delete('page') // reset page on filter change
-      router.push(`/product-server?${params.toString()}`, {
-        forceOptimisticNavigation: true,
-      } as any)
-    }, 450)
-    return () => clearTimeout(t)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, sort, category])
+    if (firstRender.current) {
+      firstRender.current = false
+      return // skip replacing URL on first load
+    }
+
+    const timer = setTimeout(() => {
+      const query = new URLSearchParams({ search, sort, category })
+      router.replace(`/product-server?${query.toString()}`)
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [search, sort, category, router])
+
+  const categories = [
+    'all',
+    'smartphones',
+    'laptops',
+    'fragrances',
+    'skincare',
+    'groceries',
+    'home-decoration',
+    'furniture',
+    'tops',
+    'womens-dresses',
+    'mens-shirts',
+    'beauty',
+  ]
+
+  const sorts = [
+    { label: 'Default', value: '' },
+    { label: 'Price Low → High', value: 'price-asc' },
+    { label: 'Price High → Low', value: 'price-desc' },
+    { label: 'Rating Low → High', value: 'rating-asc' },
+    { label: 'Rating High → Low', value: 'rating-desc' },
+  ]
 
   return (
-    <div className="flex gap-3 items-center mb-6">
+    <form
+      className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6"
+      onSubmit={(e) => e.preventDefault()}
+    >
       <input
+        type="text"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search..."
-        className="border p-2 rounded w-64"
+        placeholder="Search products..."
+        className="border rounded-lg p-2 w-full sm:w-64"
       />
       <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        className="border p-2 rounded"
+        className="border rounded-lg p-2 w-full sm:w-40"
       >
-        <option value="all">All</option>
-        <option value="beauty">Beauty</option>
-        <option value="fragrances">Fragrances</option>
-        <option value="laptops">Laptops</option>X
-        <option value="groceries">Groceries</option>X
-        <option value="furniture">Furniture</option>X
+        {categories.map((c) => (
+          <option key={c} value={c}>
+            {c.charAt(0).toUpperCase() + c.slice(1)}
+          </option>
+        ))}
       </select>
       <select
         value={sort}
         onChange={(e) => setSort(e.target.value)}
-        className="border p-2 rounded"
+        className="border rounded-lg p-2 w-full sm:w-40"
       >
-        <option value="">Default</option>
-        <option value="price-asc">Price ↑</option>
-        <option value="price-desc">Price ↓</option>
+        {sorts.map((s) => (
+          <option key={s.value} value={s.value}>
+            {s.label}
+          </option>
+        ))}
       </select>
-    </div>
+    </form>
   )
 }
