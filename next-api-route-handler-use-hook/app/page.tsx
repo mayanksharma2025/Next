@@ -1,24 +1,17 @@
-// 3. ISR (Incremental Static Regeneration)
-// Use revalidate to define a cache duration.
+// 4. Streaming / React 18 Suspense with Next.js 16
+// Next.js 16 supports React 18 streaming using Server Components.
 
 // app/page.js
-export const revalidate = 10 // regenerate page every 10 seconds
+import { Suspense } from 'react'
+import Posts from './_components/Posts'
 
-async function getData() {
-  const res = await fetch('https://jsonplaceholder.typicode.com/posts')
-  return res.json()
-}
-
-export default async function Page() {
-  const posts = await getData()
+export default function Page() {
   return (
     <div>
-      <h1>Posts (ISR)</h1>
-      <ul>
-        {posts.map((post: any) => (
-          <li key={post.id}>{post.title}</li>
-        ))}
-      </ul>
+      <h1>Streaming Posts</h1>
+      <Suspense fallback={<p>Loading posts...</p>}>
+        <Posts />
+      </Suspense>
     </div>
   )
 }
@@ -27,7 +20,7 @@ export default async function Page() {
   /* 
  ✅ Notes:
 
- Page is statically generated, but refreshed after revalidate seconds.
+ Suspense allows partial rendering while server fetch is streaming.
 
   */
 }
