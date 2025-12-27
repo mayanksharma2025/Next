@@ -1,22 +1,19 @@
-// 2. SSR (Server-Side Rendering) with fetch in App Router
-// Next.js 16 encourages server components. Use export const revalidate = 0 for SSR (always fresh).
+// 3. ISR (Incremental Static Regeneration)
+// Use revalidate to define a cache duration.
 
 // app/page.js
-export const revalidate = 0 // SSR
+export const revalidate = 10 // regenerate page every 10 seconds
 
 async function getData() {
-  const res = await fetch('https://jsonplaceholder.typicode.com/posts', {
-    cache: 'no-store',
-  })
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts')
   return res.json()
 }
 
 export default async function Page() {
   const posts = await getData()
-
   return (
     <div>
-      <h1>Posts (SSR)</h1>
+      <h1>Posts (ISR)</h1>
       <ul>
         {posts.map((post: any) => (
           <li key={post.id}>{post.title}</li>
@@ -28,9 +25,9 @@ export default async function Page() {
 
 {
   /* 
-  ✅ Notes:
+ ✅ Notes:
 
-  cache: 'no-store' ensures fresh data on every request (SSR).
+ Page is statically generated, but refreshed after revalidate seconds.
 
   */
 }
