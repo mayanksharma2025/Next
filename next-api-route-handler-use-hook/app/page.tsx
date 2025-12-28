@@ -1,14 +1,11 @@
-// 4. Streaming / React 18 Suspense with Next.js 16
-// Next.js 16 supports React 18 streaming using Server Components.
-
-// app/page.js
+// app/page.tsx
 import { Suspense } from 'react'
-import Posts from './_components/Posts'
+import Posts from '../app/_components/Posts'
 
-export default function Page() {
+export default function HomePage() {
   return (
     <div>
-      <h1>Streaming Posts</h1>
+      <h1 className="text-2xl font-bold mb-4">Streaming Posts</h1>
       <Suspense fallback={<p>Loading posts...</p>}>
         <Posts />
       </Suspense>
@@ -21,6 +18,6 @@ export default function Page() {
  ✅ Notes:
 
  Suspense allows partial rendering while server fetch is streaming.
-
+ ✅ Server-rendered with Suspense streaming, no client hooks.
   */
 }

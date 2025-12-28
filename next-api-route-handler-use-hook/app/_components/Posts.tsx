@@ -1,12 +1,15 @@
+// app/components/Posts.tsx
+import { Post } from '../types'
+
 export default async function Posts() {
   const res = await fetch('https://jsonplaceholder.typicode.com/posts', {
     next: { revalidate: 10 },
   })
-  const posts = await res.json()
+  const posts: Post[] = await res.json()
 
   return (
     <ul>
-      {posts.map((post: any) => (
+      {posts.slice(0, 10).map((post) => (
         <li key={post.id}>{post.title}</li>
       ))}
     </ul>
