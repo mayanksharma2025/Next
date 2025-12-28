@@ -1,11 +1,13 @@
 // app/page.tsx
 import { Suspense } from 'react'
-import Posts from '../app/_components/Posts'
+import Posts from './_components/Posts'
 
 export default function HomePage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Streaming Posts</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        Streaming Posts (Server Component + use())
+      </h1>
       <Suspense fallback={<p>Loading posts...</p>}>
         <Posts />
       </Suspense>
@@ -15,6 +17,18 @@ export default function HomePage() {
 
 {
   /* 
+  ✅ Notes:
+
+  use() only works in server components.
+
+  No useState, useEffect needed.
+
+  Automatically suspends until promise resolves.
+
+  ✅ Notes:
+
+  The page is entirely server-side, Suspense handles partial streaming.
+
  ✅ Notes:
 
  Suspense allows partial rendering while server fetch is streaming.
