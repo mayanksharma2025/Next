@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { User } from '../types'
 import AddUserForm from './AddUserForm'
 
-export default function UserList() {
+export default function UserList({ handleRevalidate }: any) {
   const [users, setUsers] = useState<User[]>([])
 
   useEffect(() => {
@@ -19,11 +19,13 @@ export default function UserList() {
 
   const handleAdd = (user: User) => {
     setUsers((prev) => [...prev, user])
+    handleRevalidate()
   }
 
   const handleDelete = async (id: number) => {
     await fetch(`/api/users?id=${id}`, { method: 'DELETE' })
     fetchUsers()
+    handleRevalidate()
   }
 
   return (

@@ -1,4 +1,5 @@
 // app/users/page.tsx
+import { revalidatePath } from 'next/cache'
 import UserList from '../_components/UserList'
 import { User } from '../types'
 
@@ -12,6 +13,11 @@ async function getUsers(): Promise<User[]> {
 export default async function UsersPage() {
   const users = await getUsers()
 
+  async function revalidate() {
+    'use server'
+    revalidatePath('/users')
+  }
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Users (ISR)</h1>
@@ -20,13 +26,37 @@ export default async function UsersPage() {
           <li key={user.id}>{user.name}</li>
         ))}
       </ul>
-      <UserList />
+      <UserList handleRevalidate={revalidate} />
     </div>
   )
 }
 
 {
   /* 
+      What revalidatePath actually does
+
+      Invalidates the server cache
+
+      Forces Server Components to re-run
+
+      Regenerates HTML on the next navigation or refresh
+
+      What it does NOT do
+
+      ❌ Does not touch client state
+
+      ❌ Does not re-run useEffect
+
+      ❌ Does not re-render mounted Client Components
+
+      ❌ Does not push updates to the browser
+
+      Once a Client Component is mounted:
+
+      It is fully owned by the browser.
+
+      The server cannot “reach into” the client and re-render it.
+      
      Server Components first: all data fetching happens server-side.
 
      Client Components only for interactivity (forms, button clicks).
