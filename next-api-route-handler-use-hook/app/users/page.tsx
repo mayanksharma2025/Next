@@ -1,70 +1,75 @@
 // app/users/page.tsx
-import { revalidatePath } from 'next/cache'
-import UserList from '../_components/UserList'
-import { User } from '../types'
+import type { User } from '../types'
+import { createUser, deleteUser, editUser } from '../actions/user.actions'
 
-export const revalidate = 10 // ISR: regenerate every 10s
+export const revalidate = 30
 
-async function getUsers(): Promise<User[]> {
-  const res = await fetch('http://localhost:3000/api/users')
+async function fetchUsers(): Promise<User[]> {
+  const res = await fetch('http://localhost:3000/api/users', {
+    next: { revalidate: 30 },
+  })
   return res.json()
 }
 
 export default async function UsersPage() {
-  const users = await getUsers()
-
-  async function revalidate() {
-    'use server'
-    revalidatePath('/users')
-  }
+  const users = await fetchUsers()
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Users (ISR)</h1>
-      <ul>
+    <section className="p-4 max-w-xl mx-auto">
+      <h1 className="text-xl font-bold mb-4">Users</h1>
+
+      {/* CREATE */}
+      <form action={createUser} className="flex flex-col gap-2 mb-6">
+        <input
+          name="name"
+          className="border p-2 rounded"
+          placeholder="Name"
+          required
+        />
+        <input
+          name="email"
+          className="border p-2 rounded"
+          placeholder="Email"
+          required
+        />
+        <button className="bg-blue-500 text-white p-2 rounded">Create</button>
+      </form>
+
+      {/* READ + UPDATE + DELETE */}
+      <ul className="space-y-3">
         {users.map((user) => (
-          <li key={user.id}>{user.name}</li>
+          <li key={user.id} className="border p-3 rounded">
+            {/* UPDATE */}
+            <form action={editUser} className="flex gap-2 mb-2">
+              <input type="hidden" name="id" value={user.id} />
+
+              <input
+                name="name"
+                defaultValue={user.name}
+                className="border p-1 rounded flex-1"
+                required
+              />
+
+              <input
+                name="email"
+                defaultValue={user.email}
+                className="border p-1 rounded flex-1"
+                required
+              />
+
+              <button className="bg-green-500 text-white px-3 rounded">
+                Save
+              </button>
+            </form>
+
+            {/* DELETE */}
+            <form action={deleteUser}>
+              <input type="hidden" name="id" value={user.id} />
+              <button className="text-red-500 text-sm">Delete</button>
+            </form>
+          </li>
         ))}
       </ul>
-      <UserList handleRevalidate={revalidate} />
-    </div>
+    </section>
   )
-}
-
-{
-  /* 
-      What revalidatePath actually does
-
-      Invalidates the server cache
-
-      Forces Server Components to re-run
-
-      Regenerates HTML on the next navigation or refresh
-
-      What it does NOT do
-
-      ❌ Does not touch client state
-
-      ❌ Does not re-run useEffect
-
-      ❌ Does not re-render mounted Client Components
-
-      ❌ Does not push updates to the browser
-
-      Once a Client Component is mounted:
-
-      It is fully owned by the browser.
-
-      The server cannot “reach into” the client and re-render it.
-      
-     Server Components first: all data fetching happens server-side.
-
-     Client Components only for interactivity (forms, button clicks).
-
-     Streaming/Suspense: partial content renders immediately.
-
-     TypeScript advanced types: interface, Omit, generics, function return types.
-
-     SSR / ISR: controlled caching via revalidate and fetch options.
- */
 }

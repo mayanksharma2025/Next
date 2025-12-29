@@ -24,3 +24,11 @@ export async function DELETE(req: NextRequest) {
     users = users.filter(u => u.id !== id);
     return NextResponse.json({ success: true });
 }
+
+export async function PUT(req: Request) {
+    const { id, name, email }: User = await req.json();
+    users = users.map((u: User) =>
+        u.id === id ? { ...u, name, email } : u
+    );
+    return Response.json({ success: true });
+}

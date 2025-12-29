@@ -1,9 +1,10 @@
 // types/index.ts
 export interface User {
-    id: number;
+    readonly id: number;
     name: string;
     email: string;
 }
+
 
 export interface Post {
     id: number;
