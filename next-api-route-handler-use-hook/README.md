@@ -1,36 +1,137 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+2️⃣ INSTALLATION (CLEAN START)
+Create project
+npx create-next-app@latest next16-enterprise-app
 
-## Getting Started
+Choose exactly:
 
-First, run the development server:
+✔ TypeScript
+✔ ESLint
+✔ Tailwind CSS
+✔ App Router
+✔ src/ directory
+✔ Import alias (@/\*)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Enter project
+cd next16-enterprise-app
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Additional dependencies
+npm install mongoose jsonwebtoken bcryptjs react-hot-toast
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Dev dependencies
+npm install -D @types/jsonwebtoken
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3️⃣ INITIAL FILE STRUCTURE (PHASE 0)
 
-## Learn More
+This is the base skeleton.
+No business logic yet.
 
-To learn more about Next.js, take a look at the following resources:
+src/
+├── app/
+│ ├── (auth)/
+│ │ ├── login/
+│ │ │ └── page.tsx
+│ │ └── register/
+│ │ └── page.tsx
+│ │
+│ ├── (dashboard)/
+│ │ ├── dashboard/
+│ │ │ ├── admin/
+│ │ │ │ └── page.tsx
+│ │ │ └── page.tsx
+│ │
+│ ├── api/
+│ │ ├── auth/
+│ │ │ ├── login/
+│ │ │ │ └── route.ts
+│ │ │ ├── register/
+│ │ │ │ └── route.ts
+│ │ │ └── logout/
+│ │ │ └── route.ts
+│ │ │
+│ │ ├── users/
+│ │ │ ├── route.ts
+│ │ │ └── me/
+│ │ │ └── route.ts
+│ │ │
+│ │ └── todos/
+│ │ └── route.ts
+│ │
+│ ├── layout.tsx
+│ ├── page.tsx
+│ └── middleware.ts
+│
+├── components/
+│ ├── ui/
+│ │ ├── Button.tsx
+│ │ ├── Input.tsx
+│ │ └── Modal.tsx
+│ │
+│ ├── auth/
+│ │ └── AuthForm.tsx
+│ │
+│ ├── dashboard/
+│ │ ├── UserCard.tsx
+│ │ └── TodoList.tsx
+│ │
+│ └── providers/
+│ └── ToastProvider.tsx
+│
+├── lib/
+│ ├── db.ts
+│ ├── jwt.ts
+│ ├── auth.ts
+│ ├── rbac.ts
+│ ├── rateLimit.ts
+│ └── audit.ts
+│
+├── models/
+│ ├── User.ts
+│ └── Todo.ts
+│
+├── types/
+│ ├── auth.ts
+│ ├── user.ts
+│ ├── todo.ts
+│ └── pagination.ts
+│
+├── styles/
+│ └── globals.css
+│
+└── middleware.ts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4️⃣ WHAT EACH MAJOR FOLDER IS FOR (VERY IMPORTANT)
+app/
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Routing, pages, API routes, middleware
+Server Components by default
 
-## Deploy on Vercel
+components/
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Only UI and interaction logic
+No DB, no fetch logic here
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+lib/
+
+Infrastructure layer
+(DB, JWT, RBAC, rate-limit, audit)
+
+models/
+
+Mongoose schemas
+Database-only responsibility
+
+types/
+
+Strict TypeScript contracts
+DTOs, entities, API responses
+
+5️⃣ PHASE PLAN (SIMPLE & LINEAR)
+
+We will not jump ahead again.
+
+Phase 1 — Auth (Register, Login, Logout, Middleware)
+Phase 2 — User Profile (Self-edit, Admin view)
+Phase 3 — Todos CRUD (Optimistic updates)
+Phase 4 — Education, Experience, Skills (Nested modals)
+Phase 5 — Search, Pagination, Caching
+Phase 6 — Audit logs, Rate limiting, Hardening
