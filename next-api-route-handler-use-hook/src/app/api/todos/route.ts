@@ -17,7 +17,15 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-    const token = (cookies() as any).get("token")?.value!;
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
+
+    if (!token) {
+        return NextResponse.json(
+            { error: "Unauthorized" },
+            { status: 401 }
+        );
+    }
     const { userId } = verifyJwt(token);
     const { title } = await req.json();
 
@@ -35,6 +43,17 @@ export async function PATCH(req: Request) {
 
     await connectDB();
     await Todo.findByIdAndUpdate(id, { completed });
+
+    revalidatePath("/dashboard/todos");
+
+    return new Response(null, { status: 200 });
+}
+
+export async function DELETE(req: Request) {
+    const { id } = await req.json();
+
+    await connectDB();
+    await Todo.findByIdAndDelete(id);
 
     revalidatePath("/dashboard/todos");
 

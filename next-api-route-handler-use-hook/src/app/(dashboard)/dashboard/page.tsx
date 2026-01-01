@@ -13,10 +13,10 @@ export default function DashboardPage() {
       <LogoutButton />
       <MyProfile />
       <EditProfileModal />
-      {/* <SkillsEditor />
+      <SkillsEditor />
       <AddressModal />
       <EducationModal />
-      <ExperienceModal /> */}
+      <ExperienceModal />
     </main>
   )
 }

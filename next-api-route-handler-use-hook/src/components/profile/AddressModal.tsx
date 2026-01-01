@@ -30,7 +30,7 @@ export function AddressModal({ address }: { address?: Address }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="rounded bg-indigo-600 px-4 py-2 text-white"
+        className="rounded bg-indigo-600 px-4 py-2 text-white mx-2"
       >
         Edit Address
       </button>

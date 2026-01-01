@@ -4,7 +4,7 @@ import { verifyJwt } from 'lib/jwt'
 
 export const runtime = 'nodejs'
 
-export default async function DashboardLayout({
+export default async function TodosLayout({
   children,
 }: {
   children: React.ReactNode
@@ -16,11 +16,7 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
-  const payload = verifyJwt(token)
-
-  // if (payload.role !== 'admin') {
-  //   redirect('/dashboard')
-  // }
+  verifyJwt(token)
 
   return <>{children}</>
 }

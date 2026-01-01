@@ -14,3 +14,14 @@ export async function getCurrentUser() {
     await connectDB()
     return User.findById(payload.userId).select('-password')
 }
+export async function getAdminUser() {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')?.value
+
+    if (!token) return null
+
+    const payload = verifyJwt(token)
+
+    await connectDB()
+    return User.find({ role: "admin" }).select('-password')
+}

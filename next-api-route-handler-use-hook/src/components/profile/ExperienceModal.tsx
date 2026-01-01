@@ -33,7 +33,7 @@ export function ExperienceModal({ experience }: { experience?: Experience[] }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="rounded bg-green-600 px-4 py-2 text-white"
+        className="rounded bg-green-600 px-4 py-2 text-white mx-2"
       >
         Add Experience
       </button>

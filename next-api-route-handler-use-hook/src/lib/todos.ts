@@ -4,9 +4,14 @@ import { connectDB } from "./db";
 import { Todo } from "../models/Todo";
 import type { Todo as TodoType } from "../types/todo";
 
-export async function getTodos(): Promise<TodoType[]> {
-    const token = (cookies() as any).get("token")?.value!;
+export async function getTodos(): Promise<TodoType[] | null> {
+    "use server"
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')?.value
+    if (!token) return null
+
     const { userId } = verifyJwt(token);
+    // const payload = verifyJwt(token)
 
     await connectDB();
 
