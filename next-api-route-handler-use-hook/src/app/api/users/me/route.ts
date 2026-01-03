@@ -30,7 +30,7 @@ export async function GET() {
             { status: 404 }
         );
     }
-
+    revalidatePath('/dashboard')
     return NextResponse.json(user);
 }
 
@@ -60,7 +60,7 @@ export async function PUT(req: Request) {
     });
 
 
-    // revalidatePath('dashboard')
+    revalidatePath('/dashboard')
 
     return NextResponse.json({ success: true });
 }

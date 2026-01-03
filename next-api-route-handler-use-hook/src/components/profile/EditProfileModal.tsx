@@ -4,7 +4,13 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { Modal } from '../ui/Modal'
 
-export function EditProfileModal({ currentName }: { currentName?: string }) {
+export function EditProfileModal({
+  currentName,
+  formsubmit,
+}: {
+  currentName?: string
+  formsubmit: () => void
+}) {
   const [open, setOpen] = useState(false)
 
   async function submit(formData: FormData) {
@@ -23,6 +29,7 @@ export function EditProfileModal({ currentName }: { currentName?: string }) {
     res.ok ? toast.success('Profile updated') : toast.error('Update failed')
 
     setOpen(false)
+    formsubmit()
   }
 
   return (

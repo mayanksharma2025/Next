@@ -1,70 +1,96 @@
 'use client'
 
-import { useOptimistic, useTransition } from 'react'
+import { useOptimistic, useState, useTransition } from 'react'
 import toast from 'react-hot-toast'
 import type { Todo } from '../../types/todo'
+import { createTodo, toggleTodo, deleteTodo } from '../../lib/actions/actions'
+
+type Action =
+  | { type: 'add'; todo: Todo }
+  | { type: 'remove'; id: string }
+  | { type: 'toggle'; id: string }
 
 export default function TodosClient({
   initialTodos,
 }: {
   initialTodos: Todo[]
 }) {
+  const [baseTodos, setBaseTodos] = useState(initialTodos)
   const [isPending, startTransition] = useTransition()
 
-  const [todos, updateTodos] = useOptimistic(
-    initialTodos,
-    (state, action: any) => {
+  const [optimisticTodos, updateOptimistic] = useOptimistic(
+    baseTodos,
+    (state: Todo[], action: Action) => {
       switch (action.type) {
         case 'add':
           return [action.todo, ...state]
+
+        case 'remove':
+          return state.filter((t) => t._id !== action.id)
+
         case 'toggle':
           return state.map((t) =>
             t._id === action.id ? { ...t, completed: !t.completed } : t
           )
-        case 'remove':
-          return state.filter((t) => t._id !== action.id)
+
         default:
           return state
       }
     }
   )
 
+  /* ---------------- ADD ---------------- */
   async function addTodo(title: string) {
-    const temp = {
-      _id: crypto.randomUUID(),
-      title,
-      completed: false,
-    } as Todo
+    const tempId = crypto.randomUUID()
 
-    startTransition(() => updateTodos({ type: 'add', todo: temp }))
-
-    const res = await fetch('/api/todos', {
-      method: 'POST',
-      body: JSON.stringify({ title }),
+    startTransition(() => {
+      updateOptimistic({
+        type: 'add',
+        todo: { _id: tempId, title, completed: false },
+      })
     })
 
-    if (!res.ok) toast.error('Failed')
+    try {
+      const saved = await createTodo(title)
+      setBaseTodos((prev) => [saved, ...prev])
+    } catch {
+      toast.error('Failed to add todo')
+      setBaseTodos((prev) => prev) // rollback trigger
+    }
   }
 
+  /* ---------------- TOGGLE ---------------- */
   async function toggle(todo: Todo) {
-    startTransition(() => updateTodos({ type: 'toggle', id: todo._id }))
-
-    await fetch('/api/todos', {
-      method: 'PATCH',
-      body: JSON.stringify({
-        id: todo._id,
-        completed: !todo.completed,
-      }),
+    startTransition(() => {
+      updateOptimistic({ type: 'toggle', id: todo._id })
     })
+
+    try {
+      await toggleTodo(todo._id, !todo.completed)
+      setBaseTodos((prev) =>
+        prev.map((t) =>
+          t._id === todo._id ? { ...t, completed: !t.completed } : t
+        )
+      )
+    } catch {
+      toast.error('Failed to update todo')
+      setBaseTodos((prev) => prev) // rollback
+    }
   }
 
+  /* ---------------- DELETE ---------------- */
   async function remove(id: string) {
-    startTransition(() => updateTodos({ type: 'remove', id }))
-
-    await fetch('/api/todos', {
-      method: 'DELETE',
-      body: JSON.stringify({ id }),
+    startTransition(() => {
+      updateOptimistic({ type: 'remove', id })
     })
+
+    try {
+      await deleteTodo(id)
+      setBaseTodos((prev) => prev.filter((t) => t._id !== id))
+    } catch {
+      toast.error('Failed to delete todo')
+      setBaseTodos((prev) => prev) // rollback
+    }
   }
 
   return (
@@ -72,11 +98,8 @@ export default function TodosClient({
       <TodoInput onAdd={addTodo} />
 
       <ul className="space-y-2">
-        {todos.map((todo) => (
-          <li
-            key={todo._id}
-            className="flex justify-between rounded border p-3"
-          >
+        {optimisticTodos.map((todo) => (
+          <li key={todo._id} className="flex justify-between border p-3">
             <label className="flex gap-2">
               <input
                 type="checkbox"
@@ -87,24 +110,26 @@ export default function TodosClient({
                 {todo.title}
               </span>
             </label>
-            <button onClick={() => remove(todo._id)} className="text-red-500">
+
+            <button onClick={() => remove(todo._id)} className="text-red-600">
               ×
             </button>
           </li>
         ))}
       </ul>
+
+      {isPending && <p className="text-sm text-gray-400">Updating…</p>}
     </div>
   )
 }
 
+/* ---------------- INPUT ---------------- */
 function TodoInput({ onAdd }: { onAdd: (t: string) => void }) {
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault()
-        const input = e.currentTarget.elements.namedItem(
-          'title'
-        ) as HTMLInputElement
+        const input = e.currentTarget.title as HTMLInputElement | any
         onAdd(input.value)
         input.value = ''
       }}
@@ -113,8 +138,8 @@ function TodoInput({ onAdd }: { onAdd: (t: string) => void }) {
       <input
         name="title"
         required
-        placeholder="New todo"
         className="flex-1 border px-3 py-2"
+        placeholder="New todo"
       />
       <button className="bg-blue-600 px-4 py-2 text-white">Add</button>
     </form>

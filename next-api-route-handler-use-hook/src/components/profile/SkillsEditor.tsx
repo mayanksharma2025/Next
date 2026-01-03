@@ -3,7 +3,13 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 
-export function SkillsEditor({ skills = [] }: { skills?: string[] }) {
+export function SkillsEditor({
+  skills = [],
+  formsubmit,
+}: {
+  skills?: string[]
+  formsubmit: () => void
+}) {
   const [value, setValue] = useState('')
 
   async function addSkill() {
@@ -19,6 +25,7 @@ export function SkillsEditor({ skills = [] }: { skills?: string[] }) {
     res.ok ? toast.success('Skill added') : toast.error('Failed')
 
     setValue('')
+    formsubmit()
   }
 
   async function removeSkill(skill: string) {

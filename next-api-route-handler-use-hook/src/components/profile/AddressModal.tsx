@@ -5,7 +5,13 @@ import toast from 'react-hot-toast'
 import { Modal } from '../ui/Modal'
 import type { Address } from '../../types/user'
 
-export function AddressModal({ address }: { address?: Address }) {
+export function AddressModal({
+  address,
+  formsubmit,
+}: {
+  address?: Address
+  formsubmit: () => void
+}) {
   const [open, setOpen] = useState(false)
 
   async function submit(formData: FormData) {
@@ -24,6 +30,7 @@ export function AddressModal({ address }: { address?: Address }) {
     res.ok ? toast.success('Address updated') : toast.error('Failed')
 
     setOpen(false)
+    formsubmit()
   }
 
   return (

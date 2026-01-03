@@ -2,8 +2,8 @@ export type TodoStatus = "pending" | "done";
 
 export interface Todo {
     _id: string;
-    userId: string;
+    userId?: string;
     title: string;
-    completed: boolean;
-    createdAt: string;
+    completed?: boolean;
+    createdAt?: string;
 }
