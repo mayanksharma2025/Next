@@ -1,30 +1,20 @@
-import { headers } from "next/headers";
-import { connectDB } from "@/lib/db";
-import { AuditLog } from "@/models/AuditLog";
+import { connectDB } from "./db";
+import { AuditLog } from "../models/AuditLog";
 
-interface AuditParams {
-    userId: string;
+interface AuditInput {
     action: string;
-    resource: string;
-    metadata?: Record<string, unknown>;
+    userId?: string;
+    role?: string;
+    ip?: string;
+    userAgent?: string;
 }
 
-export async function logAudit({
-    userId,
-    action,
-    resource,
-    metadata,
-}: AuditParams) {
-    const h = headers() as any;
-
-    await connectDB();
-
-    await AuditLog.create({
-        userId,
-        action,
-        resource,
-        metadata,
-        ip: h.get("x-forwarded-for") ?? "unknown",
-        userAgent: h.get("user-agent") ?? "unknown",
-    });
+export async function auditLog(data: AuditInput) {
+    try {
+        await connectDB();
+        await AuditLog.create(data);
+    } catch (err) {
+        // audit failure must NEVER break auth flow
+        console.error("Audit log failed:", err);
+    }
 }

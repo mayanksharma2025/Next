@@ -3,10 +3,12 @@ import bcrypt from "bcryptjs";
 import { connectDB } from "../../../../lib/db";
 import { User } from "../../../../models/User";
 import { signJwt } from "../../../../lib/jwt";
+import { auditLog } from "../../../../lib/audit";
 import {
     requireEmail,
     requireString,
 } from "../../../../lib/validation";
+import { withRateLimit } from "lib/with-rate-limit";
 
 async function loginHandler(req: Request) {
     const body = await req.json();
@@ -37,7 +39,12 @@ async function loginHandler(req: Request) {
         role: user.role,
     });
 
-    console.log({ token })
+    // ✅ AUDIT LOG (successful login only)
+    await auditLog({
+        action: "USER_LOGIN",
+        userId: user._id.toString(),
+        role: user.role,
+    });
 
     const response = NextResponse.json({ success: true });
 
@@ -45,17 +52,44 @@ async function loginHandler(req: Request) {
         httpOnly: true,
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
-        // sameSite: "strict",
         path: "/",
     });
 
     return response;
 }
 
-export async function POST(req: Request) {
-    return loginHandler(req);
-}
 
+export const POST = withRateLimit(loginHandler, {
+    limit: 3,
+    windowMs: 60_000,
+});
+
+
+// Summary(Remember This)
+
+// rateLimit() = counter logic
+
+// withRateLimit() = middleware - style wrapper
+
+// Use on auth APIs only
+
+// Prevents brute force
+
+// Required for security audits
+
+
+// ✔ Why this is best
+
+// One security boundary
+
+// Reusable for mobile / external clients
+
+// Centralized protection
+
+// Cleaner mental model
+
+// ✅ No rate limiting in the page
+// ✅ Rate limiting ONLY in API
 
 
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit } from "../lib/rate-limit";
 
 export function withRateLimit(
     handler: Function,

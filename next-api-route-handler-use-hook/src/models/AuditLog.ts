@@ -1,29 +1,24 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, models } from "mongoose";
 
-const AuditLogSchema = new Schema(
+export interface IAuditLog {
+    action: string;
+    userId?: string;
+    role?: string;
+    ip?: string;
+    userAgent?: string;
+    createdAt: Date;
+}
+
+const AuditLogSchema = new Schema<IAuditLog>(
     {
-        userId: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-            index: true,
-            required: true,
-        },
-        action: {
-            type: String,
-            required: true,
-            index: true,
-        },
-        resource: {
-            type: String,
-            required: true,
-        },
-        ip: String,
-        userAgent: String,
-        metadata: Schema.Types.Mixed,
+        action: { type: String, required: true },
+        userId: { type: String },
+        role: { type: String },
+        ip: { type: String },
+        userAgent: { type: String },
     },
-    { timestamps: true }
+    { timestamps: { createdAt: true, updatedAt: false } }
 );
 
 export const AuditLog =
-    mongoose.models.AuditLog ||
-    mongoose.model("AuditLog", AuditLogSchema);
+    models.AuditLog || mongoose.model("AuditLog", AuditLogSchema);

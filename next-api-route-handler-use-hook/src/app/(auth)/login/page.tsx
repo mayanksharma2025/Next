@@ -1,10 +1,12 @@
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import bcrypt from 'bcryptjs'
 import { connectDB } from '../../../lib/db'
 import { User } from '../../../models/User'
 import { signJwt } from '../../../lib/jwt'
 import { AuthForm } from '../../../components/auth/AuthForm'
+import { auditLog } from 'lib/audit'
+import { Clientpage } from 'components/auth/Clientpage'
 
 export default function LoginPage() {
   async function submit(formData: FormData) {
@@ -26,6 +28,19 @@ export default function LoginPage() {
       role: user.role,
     })
 
+    // ✅ HEADERS MUST BE AWAITED
+    const h = await headers()
+
+    // ✅ AUDIT LOG
+    await auditLog({
+      action: 'USER_LOGIN',
+      userId: user._id.toString(),
+      role: user.role,
+      ip: h.get('x-forwarded-for') ?? 'unknown',
+      userAgent: h.get('user-agent') ?? 'unknown',
+    })
+
+    // ✅ COOKIES ARE SYNC
     const cookieStore = await cookies()
     cookieStore.set('token', token, {
       httpOnly: true,
@@ -33,12 +48,14 @@ export default function LoginPage() {
       secure: process.env.NODE_ENV === 'production',
       path: '/',
     })
+
     redirect('/dashboard')
   }
 
   return (
     <main className="flex min-h-screen items-center justify-center">
-      <AuthForm title="Login" submitLabel="Sign In" onSubmit={submit} />
+      <AuthForm title="Login Server" submitLabel="Sign In" onSubmit={submit} />
+      <Clientpage />
     </main>
   )
 }
