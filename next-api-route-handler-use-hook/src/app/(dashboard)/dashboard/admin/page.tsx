@@ -2,6 +2,10 @@ import { getAdminUser, getCurrentUser } from 'lib/auth'
 import { redirect } from 'next/navigation'
 import { use } from 'react'
 import { cookies } from 'next/headers'
+import AuditPage from 'components/audit/page'
+
+export const revalidate = 120
+// export const dynamic = 'force-static'
 
 async function fetchUsers(q = '', page = 1) {
   const cookieStore = await cookies()
@@ -17,7 +21,8 @@ async function fetchUsers(q = '', page = 1) {
       headers: {
         Cookie: `token=${token}`,
       },
-      cache: 'no-store',
+      next: { revalidate: 120 },
+      cache: 'force-cache',
     }
   )
 
@@ -57,6 +62,7 @@ export default function AdminDashboard() {
           ))}
         </tbody>
       </table>
+      <AuditPage />
     </section>
   )
 }

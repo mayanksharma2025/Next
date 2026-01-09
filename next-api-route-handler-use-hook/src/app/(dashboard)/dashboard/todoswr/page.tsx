@@ -1,6 +1,6 @@
 import { getTodos } from 'lib/todos'
-import TodosClient from 'components/todos/TodosClient'
 import { Todo } from 'types/todo'
+import SWRTodo from 'components/todos/SWRTodo'
 import Link from 'next/link'
 
 export default async function TodosPage() {
@@ -13,12 +13,12 @@ export default async function TodosPage() {
         <h1 className="text-xl font-semibold">My Todos</h1>
 
         <h2 className="text-xl font-semibold text-blue-400">
-          <Link href={'/dashboard/todoswr'} rel="noopener noreferrer">
-            Todos SWR
+          <Link href={'/dashboard/todos'} rel="noopener noreferrer">
+            Todos
           </Link>
         </h2>
       </div>
-      <TodosClient initialTodos={todos} />
+      <SWRTodo />
     </section>
   )
 }

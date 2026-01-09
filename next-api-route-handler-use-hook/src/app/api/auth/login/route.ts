@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { Types } from "mongoose";
 import { connectDB } from "../../../../lib/db";
 import { User } from "../../../../models/User";
 import { signJwt } from "../../../../lib/jwt";
 import { auditLog } from "../../../../lib/audit";
+
 import {
     requireEmail,
     requireString,
 } from "../../../../lib/validation";
 import { withRateLimit } from "lib/with-rate-limit";
+import { IAuditLog } from "models/AuditLog";
 
 async function loginHandler(req: Request) {
     const body = await req.json();
@@ -42,9 +45,9 @@ async function loginHandler(req: Request) {
     // ✅ AUDIT LOG (successful login only)
     await auditLog({
         action: "USER_LOGIN",
-        userId: user._id.toString(),
+        userId: new Types.ObjectId(user._id), // ✅ store as ObjectId
         role: user.role,
-    });
+    } as IAuditLog);
 
     const response = NextResponse.json({ success: true });
 

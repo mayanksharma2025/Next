@@ -1,9 +1,10 @@
 import { connectDB } from "./db";
 import { AuditLog } from "../models/AuditLog";
+import { ObjectId, Types } from "mongoose";
 
 interface AuditInput {
     action: string;
-    userId?: string;
+    userId?: string | Types.ObjectId;
     role?: string;
     ip?: string;
     userAgent?: string;
