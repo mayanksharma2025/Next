@@ -1,18 +1,18 @@
 // app/users/page.tsx
-import type { User } from '../types'
+import type { User as UserType } from '../types'
 import { createUser, deleteUser, editUser } from '../actions/user.actions'
+import { connectDB } from '../lib/mongodb'
+import { User } from '../models/User'
 
 export const revalidate = 30
 
-async function fetchUsers(): Promise<User[]> {
-  const res = await fetch('http://localhost:3000/api/users', {
-    next: { revalidate: 30 },
-  })
-  return res.json()
+async function fetchUsers() {
+  await connectDB()
+  return User.find().lean()
 }
 
 export default async function UsersPage() {
-  const users = await fetchUsers()
+  const users: UserType[] = await fetchUsers()
 
   return (
     <section className="p-4 max-w-xl mx-auto">
@@ -38,10 +38,10 @@ export default async function UsersPage() {
       {/* READ + UPDATE + DELETE */}
       <ul className="space-y-3">
         {users.map((user) => (
-          <li key={user.id} className="border p-3 rounded">
+          <li key={user._id} className="border p-3 rounded">
             {/* UPDATE */}
             <form action={editUser} className="flex gap-2 mb-2">
-              <input type="hidden" name="id" value={user.id} />
+              <input type="hidden" name="id" value={String(user._id)} />
 
               <input
                 name="name"
@@ -64,7 +64,7 @@ export default async function UsersPage() {
 
             {/* DELETE */}
             <form action={deleteUser}>
-              <input type="hidden" name="id" value={user.id} />
+              <input type="hidden" name="id" value={String(user._id)} />
               <button className="text-red-500 text-sm">Delete</button>
             </form>
           </li>
