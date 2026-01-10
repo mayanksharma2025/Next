@@ -1,73 +1,30 @@
-// app/users/page.tsx
-import type { User as UserType } from '../types'
-import { createUser, deleteUser, editUser } from '../actions/user.actions'
 import { connectDB } from '../lib/mongodb'
 import { User } from '../models/User'
+import CreateUserForm from '../_components/create-user-form'
+import { editUser, deleteUser } from '../actions/user.actions'
+import UserRow from '../_components/user-row'
+import { serializeUser } from '../lib/serialize-user'
 
 export const revalidate = 30
 
 async function fetchUsers() {
   await connectDB()
-  return User.find().lean()
+  const users = await User.find().lean()
+  return users.map(serializeUser)
 }
 
 export default async function UsersPage() {
-  const users: UserType[] = await fetchUsers()
+  const users = await fetchUsers()
 
   return (
     <section className="p-4 max-w-xl mx-auto">
       <h1 className="text-xl font-bold mb-4">Users</h1>
 
-      {/* CREATE */}
-      <form action={createUser} className="flex flex-col gap-2 mb-6">
-        <input
-          name="name"
-          className="border p-2 rounded"
-          placeholder="Name"
-          required
-        />
-        <input
-          name="email"
-          className="border p-2 rounded"
-          placeholder="Email"
-          required
-        />
-        <button className="bg-blue-500 text-white p-2 rounded">Create</button>
-      </form>
+      <CreateUserForm />
 
-      {/* READ + UPDATE + DELETE */}
       <ul className="space-y-3">
         {users.map((user) => (
-          <li key={user._id} className="border p-3 rounded">
-            {/* UPDATE */}
-            <form action={editUser} className="flex gap-2 mb-2">
-              <input type="hidden" name="id" value={String(user._id)} />
-
-              <input
-                name="name"
-                defaultValue={user.name}
-                className="border p-1 rounded flex-1"
-                required
-              />
-
-              <input
-                name="email"
-                defaultValue={user.email}
-                className="border p-1 rounded flex-1"
-                required
-              />
-
-              <button className="bg-green-500 text-white px-3 rounded">
-                Save
-              </button>
-            </form>
-
-            {/* DELETE */}
-            <form action={deleteUser}>
-              <input type="hidden" name="id" value={String(user._id)} />
-              <button className="text-red-500 text-sm">Delete</button>
-            </form>
-          </li>
+          <UserRow key={String(user.id)} user={user} />
         ))}
       </ul>
     </section>

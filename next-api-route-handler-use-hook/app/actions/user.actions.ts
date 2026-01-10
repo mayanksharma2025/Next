@@ -3,33 +3,84 @@
 import { revalidatePath } from 'next/cache';
 import { connectDB } from '../lib/mongodb';
 import { User } from '../models/User';
+import {
+    createUserSchema,
+    updateUserSchema,
+    deleteUserSchema,
+} from '../lib/validators/user.schema';
+import { parseFormData } from '../lib/validators/parse-form-data';
 
-export async function createUser(formData: FormData) {
+export type ActionState = {
+    error?: string;
+    success?: boolean;
+};
+
+/* CREATE */
+export async function createUser(
+    prevState: ActionState,
+    formData: FormData
+): Promise<ActionState> {
+    const data = parseFormData(formData);
+    const result = createUserSchema.safeParse(data);
+
+    if (!result.success) {
+        return { error: result.error.issues[0].message };
+    }
+
     await connectDB();
+    await User.create(result.data);
 
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
-
-    await User.create({ name, email });
     revalidatePath('/users');
+    return { success: true };
 }
 
-export async function editUser(formData: FormData) {
+/* EDIT */
+export async function editUser(
+    prevState: ActionState,
+    formData: FormData
+): Promise<ActionState> {
+    const data = parseFormData(formData);
+    const result = updateUserSchema.safeParse(data);
+
+    if (!result.success) {
+        return { error: result.error.issues[0].message };
+    }
+
     await connectDB();
 
-    const id = formData.get('id') as string;
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
+    const updated = await User.findByIdAndUpdate(
+        result.data.id,
+        { name: result.data.name, email: result.data.email },
+        { new: true }
+    );
 
-    await User.findByIdAndUpdate(id, { name, email });
+    if (!updated) {
+        return { error: 'User not found' };
+    }
+
     revalidatePath('/users');
+    return { success: true };
 }
 
-export async function deleteUser(formData: FormData) {
+/* DELETE */
+export async function deleteUser(
+    prevState: ActionState,
+    formData: FormData
+): Promise<ActionState> {
+    const data = parseFormData(formData);
+    const result = deleteUserSchema.safeParse(data);
+
+    if (!result.success) {
+        return { error: result.error.issues[0].message };
+    }
+
     await connectDB();
 
-    const id = formData.get('id') as string;
-    await User.findByIdAndDelete(id);
+    const deleted = await User.findByIdAndDelete(result.data.id);
+    if (!deleted) {
+        return { error: 'User not found' };
+    }
 
     revalidatePath('/users');
+    return { success: true };
 }
