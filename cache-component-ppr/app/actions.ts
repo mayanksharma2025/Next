@@ -1,15 +1,24 @@
 // app/actions.ts
 "use server";
 
-import { cookies } from "next/headers";
+import { updateTag } from "next/cache";
 
-export async function toggleTheme() {
-  const cookieStore = await cookies();
-  const current = cookieStore.get("theme")?.value || "light";
+export async function addUser(formData: FormData) {
+  const name = formData.get("name") as string;
 
-  const nextTheme = current === "light" ? "dark" : "light";
+  if (!name) return;
 
-  cookieStore.set("theme", nextTheme);
+  // Create new user
+  await fetch("http://localhost:4000/users", {
+    method: "POST",
+    body: JSON.stringify({
+      name,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
-  // no return needed
+  // 🔥 Invalidate cache
+  updateTag("users");
 }
