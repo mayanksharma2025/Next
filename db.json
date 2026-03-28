@@ -1,7 +1,8 @@
 {
   "users": [
-    { "id": 1, "name": "Aman" },
-    { "id": 2, "name": "Rohit" }
+    { "id": "1", "name": "Aman", "email": "aman@test.com" },
+    { "id": "2", "name": "Rohit", "email": "rohit@test.com" },
+    { "id": "3", "name": "Priya", "email": "priya@test.com" }
   ],
   "posts": [
     { "id": 1, "title": "React Basics", "author": "Aman" },
