@@ -1,26 +1,21 @@
-// app/page.tsx
+import { cookies } from "next/headers";
 import { Suspense } from "react";
+import ThemeButton from "./components/ThemeButton";
 
-async function LiveUsers() {
-  const res = await fetch("http://localhost:4000/users");
-  const users = await res.json();
+async function UserTheme() {
+  const cookieStore = await cookies();
+  const theme = cookieStore.get("theme")?.value || "light";
 
-  return (
-    <ul>
-      {users.map((u: any) => (
-        <li key={u.id}>{u.name}</li>
-      ))}
-    </ul>
-  );
+  return <p>Theme: {theme}</p>;
 }
 
 export default function Page() {
   return (
     <>
-      <h1>Streaming Example</h1>
+      <ThemeButton />
 
-      <Suspense fallback={<p>Loading users...</p>}>
-        <LiveUsers />
+      <Suspense fallback={<p>Loading theme...</p>}>
+        <UserTheme />
       </Suspense>
     </>
   );
