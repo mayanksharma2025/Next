@@ -1,33 +1,34 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function ThemeButton() {
   const router = useRouter();
+  const [theme, setLocalTheme] = useState("light");
 
-  const setTheme = async (theme: string) => {
+  const setTheme = async (newTheme: string) => {
+    setLocalTheme(newTheme); // instant UI update
+
     await fetch("/api/set-theme", {
       method: "POST",
-      body: JSON.stringify({ theme }),
+      body: JSON.stringify({ theme: newTheme }),
     });
 
-    // ✅ Only refresh server components (no full reload)
     router.refresh();
   };
 
   return (
-    <div className="flex gap-4">
+    <div className="space-y-3">
+      <p>Current: {theme}</p>
+
       <button
+        className="bg-white p-4 border my-2 text-black"
         onClick={() => setTheme("light")}
-        className="px-4 py-2 bg-gray-200"
       >
         Light
       </button>
-
-      <button
-        onClick={() => setTheme("dark")}
-        className="px-4 py-2 bg-black text-white"
-      >
+      <button className=" p-4 border my-2 " onClick={() => setTheme("dark")}>
         Dark
       </button>
     </div>
