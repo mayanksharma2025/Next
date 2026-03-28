@@ -1,73 +1,124 @@
 // app/page.tsx
-import { cookies } from "next/headers";
 import { Suspense } from "react";
-import type { User } from "@/app/types/user";
-import { fetchUser } from "@/app/lib/api";
+import { cookies } from "next/headers";
+import { cacheLife } from "next/cache";
+import { toggleTheme } from "./actions";
 
 export default function Page() {
   return (
-    <main style={{ padding: "20px", fontFamily: "sans-serif" }}>
-      <h1>Runtime → Cached Bridge Demo</h1>
+    <main style={{ padding: 20, fontFamily: "sans-serif" }}>
+      {/* Static */}
+      <h1>Dashboard</h1>
 
-      <Suspense fallback={<p>Loading user...</p>}>
-        <Wrapper />
+      {/* Cached */}
+      <Users />
+
+      {/* Dynamic */}
+      <Suspense fallback={<p>Loading preferences...</p>}>
+        <UserPrefs />
       </Suspense>
     </main>
   );
 }
 
-// 🔴 Runtime Component (reads cookie)
-async function Wrapper() {
-  const cookieStore = await cookies();
-  const userId = cookieStore.get("userId")?.value;
+// 🟢 Cached Component
+async function Users() {
+  "use cache";
+  cacheLife("hours");
 
-  if (!userId) {
-    return (
-      <div>
-        <p>❌ No userId cookie found</p>
-        <p>👉 Set cookie: userId=1</p>
-      </div>
-    );
-  }
+  const res = await fetch("http://localhost:4000/users");
+  const users: { id: string; name: string }[] = await res.json();
 
-  return <CachedUser userId={userId} />;
+  return (
+    <div style={{ marginTop: 20 }}>
+      <h2>Users (Cached)</h2>
+      <ul>
+        {users.map((u) => (
+          <li key={u.id}>{u.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
-// 🟢 Cached Component (PURE + DETERMINISTIC)
-async function CachedUser({ userId }: { userId: string }) {
-  "use cache";
+// 🔴 Dynamic Component
+async function UserPrefs() {
+  const cookieStore = await cookies();
+  const theme = cookieStore.get("theme")?.value || "light";
 
-  try {
-    const user: User = await fetchUser(userId);
+  return (
+    <div style={{ marginTop: 20 }}>
+      <h2>User Preferences (Dynamic)</h2>
 
-    return (
-      <div style={{ border: "1px solid #ccc", padding: "10px" }}>
-        <h2>✅ Cached User Data</h2>
-        <p>
-          <strong>ID:</strong> {user.id}
-        </p>
-        <p>
-          <strong>Name:</strong> {user.name}
-        </p>
-        <p>
-          <strong>Email:</strong> {user.email}
-        </p>
-      </div>
-    );
-  } catch (error) {
-    return <p>❌ Failed to load user</p>;
-  }
+      <p>
+        Current Theme: <strong>{theme}</strong>
+      </p>
+
+      {/* Server Action Form */}
+      <form action={toggleTheme}>
+        <button
+          type="submit"
+          style={{
+            padding: "8px 12px",
+            cursor: "pointer",
+            marginTop: 10,
+          }}
+        >
+          Toggle Theme
+        </button>
+      </form>
+    </div>
+  );
 }
 
 {
   /*
-    Chrome DevTools:
-      Go to → Application
-      Cookies → localhost:3000
+  What You Will See
 
-      Add:
+    Initial Load:
+    Users → instantly visible (cached)
+    Theme → "light" (default)
 
-      Name: userId
-      Value: 1
+    Click Button:
+
+    Form triggers Server Action
+    Cookie updates (theme=dark)
+    Page refreshes
+    Theme updates ✅
+
+
+    🧠 What’s Happening Internally
+      🟢 Users Component
+        'use cache'
+        Runs at build/request once
+        Cached for hours
+        Same for all users
+
+      🔴 UserPrefs Component
+        cookies()
+        Runs on EVERY request
+        Cannot be cached
+        Personalized
+
+      🔁 Button Flow
+        Click →
+        Server Action →
+        cookie updated →
+        Next.js re-renders →
+        UserPrefs runs again →
+
+
+        ⚡ Important Insight
+
+        👉 Only UserPrefs re-runs, NOT Users
+
+        This is Partial Prerendering (PPR) in action:
+
+        | Part  | Behavior              |
+        | ----- | --------------------- |
+        | Users | cached (static shell) |
+        | Theme | dynamic (streamed)    |
+
+  
   */
 }
