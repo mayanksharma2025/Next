@@ -1,30 +1,37 @@
-// app/posts/page.tsx
-import { cacheLife } from "next/cache";
+// app/page.tsx
+import { Suspense } from "react";
 
-export default async function PostsPage() {
-  "use cache";
-  cacheLife("hours");
-
-  const res = await fetch("http://localhost:4000/posts");
-  const posts = await res.json();
+async function LiveUsers() {
+  const res = await fetch("http://localhost:4000/users");
+  const users = await res.json();
 
   return (
-    <div>
-      <h1>Posts</h1>
-      {posts.map((p: any) => (
-        <div key={p.id}>{p.title}</div>
+    <ul>
+      {users.map((u: any) => (
+        <li key={u.id}>{u.name}</li>
       ))}
-    </div>
+    </ul>
+  );
+}
+
+export default function Page() {
+  return (
+    <>
+      <h1>Streaming Example</h1>
+
+      <Suspense fallback={<p>Loading users...</p>}>
+        <LiveUsers />
+      </Suspense>
+    </>
   );
 }
 
 {
-  /*
-      🧠 Difference        vs       Data-level
-      
-      Data-level	                   UI-level
-      reusable	                     tied to component
-      flexible	                     simple
-      best for shared logic	         best for page-level caching
+  /* 
+  🧠 Behavior
+    Initial HTML → fallback
+    Data → streamed later
+    No caching at all
+  
   */
 }
