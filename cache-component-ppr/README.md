@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+we step into real SaaS architecture, not just demos.
+This will mirror patterns used in production systems (think dashboards like Stripe, Notion, etc.).
 
-## Getting Started
+We’ll design a multi-user dashboard with:
 
-First, run the development server:
+✅ Per-user caching (fine-grained)
+✅ Global + scoped cache tags
+✅ Mutations with selective invalidation
+✅ Separation of concerns (data layer, UI layer)
+✅ Scalable patterns
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🧱 1. Architecture Overview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+                ┌──────────────────────┐
+                │   Browser (User A)   │
+                └─────────┬────────────┘
+                          │ request
+                          ▼
+              ┌──────────────────────────┐
+              │  Next.js Server (RSC)    │
+              ├──────────────────────────┤
+              │ Wrapper (cookies/user)   │  🔴 runtime
+              │ Cached Components        │  🟢 cached
+              │ Server Actions           │  🟡 mutation
+              └─────────┬────────────────┘
+                        │
+                        ▼
+                ┌───────────────┐
+                │ json-server   │
+                │ (db.json)     │
+                └───────────────┘
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+🔑 9. Set Cookie (Simulate Logged-in User)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+DevTools → Cookies:
 
-## Learn More
+userId = 1
+🔍 10. Behavior Walkthrough
+🟢 First Load
+Dashboard →
+Projects(userId=1) →
+fetch →
+cached with tag: projects-user-1
+➕ Add Project
+Form submit →
+Server Action →
+POST project →
+updateTag("projects-user-1")
+🔄 After Mutation
+Cache invalidated ONLY for user 1
+User 2 cache remains untouched ✅
+🧠 Why This is SaaS-Level
+❌ Naive Approach
+cacheTag("projects")
 
-To learn more about Next.js, take a look at the following resources:
+➡️ Problem:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+One user updates → ALL users cache invalidated ❌
+✅ Correct Approach
+cacheTag(`projects-user-${userId}`)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+➡️ Benefit:
 
-## Deploy on Vercel
+Isolation per tenant (multi-tenant SaaS)
+Scalable
+Efficient
+⚡ Advanced Patterns
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Multi-tag Strategy
+   cacheTag(`projects-user-${userId}`)
+   cacheTag("projects-global")
+2. Partial Updates
+   update single project
+   not full list
+3. Hierarchical Cache
+   User
+   ├── Projects
+   │ ├── Project 1
+   │ ├── Project 2
+4. Combine with Streaming
+   <Suspense fallback="Loading analytics...">
+   <Analytics userId={userId} />
+   </Suspense>
+   🔥 Mental Model
+   Cache Key = function + args
+   Cache Tag = invalidation group
+   🚀 Real-World Mapping
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| SaaS Feature  | Strategy             |
+| ------------- | -------------------- |
+| Dashboard     | per-user cache       |
+| Notifications | streaming            |
+| Billing       | cached + revalidated |
+| Settings      | runtime              |
+
+⚠️ Production Gotchas
+
+1. Over-tagging
+
+Too many tags → hard to manage
+
+2. Under-tagging
+
+Global invalidation → performance hit
+
+3. Mixing client state with server cache
+
+→ inconsistency
+
+🧩 Final Insight
+
+This pattern gives you:
+
+✅ ISR + SSR + SWR hybrid
+✅ Zero over-fetching
+✅ Precise invalidation
+✅ Multi-tenant scalability

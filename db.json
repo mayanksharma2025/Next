@@ -2,30 +2,23 @@
   "users": [
     {
       "id": "1",
-      "name": "Aman",
-      "email": "aman@test.com"
+      "name": "Aman"
     },
     {
       "id": "2",
-      "name": "Rohit",
-      "email": "rohit@test.com"
-    },
-    {
-      "id": "3",
-      "name": "Priya",
-      "email": "priya@test.com"
+      "name": "Rohit"
     }
   ],
-  "posts": [
+  "projects": [
     {
-      "id": "1",
-      "title": "React Basics",
-      "author": "Aman"
+      "id": "p1",
+      "userId": "1",
+      "title": "Dashboard App"
     },
     {
-      "id": "2",
-      "title": "Next.js Cache",
-      "author": "Rohit"
+      "id": "p2",
+      "userId": "2",
+      "title": "Ecommerce App"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

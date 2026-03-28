@@ -1,6 +1,7 @@
 // app/lib/api.ts
 import { cacheLife } from "next/cache";
 import { User } from "@/app/types/user";
+import { Project, UserWithProjects } from "@/app/types";
 
 export async function getUsers() {
   "use cache";
@@ -21,3 +22,48 @@ export async function fetchUser(userId: string): Promise<User> {
 
   return res.json();
 }
+
+export async function getUserProjects(
+  userId: string,
+): Promise<UserWithProjects> {
+  try {
+    const res = await fetch(
+      `http://localhost:4000/users/${userId}?_embed=projects`,
+    );
+
+    if (!res.ok) {
+      console.warn("API failed:", res.status);
+
+      // ✅ return fallback instead of throwing
+      return {
+        id: userId,
+        name: "Unknown User",
+        projects: [],
+      };
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Fetch error:", error);
+
+    // ✅ fallback for network errors
+    return {
+      id: userId,
+      name: "Offline User",
+      projects: [],
+    };
+  }
+}
+
+// export async function getUserProjects(
+//   userId: string,
+// ): Promise<UserWithProjects> {
+//   const res = await fetch(
+//     `http://localhost:4000/users/${userId}?_embed=projects`,
+//   );
+//   console.log({ res });
+
+//   if (!res.ok) throw new Error("Failed to fetch projects");
+
+//   return res.json();
+// }
