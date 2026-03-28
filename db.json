@@ -1,0 +1,10 @@
+{
+  "users": [
+    { "id": 1, "name": "Aman" },
+    { "id": 2, "name": "Rohit" }
+  ],
+  "posts": [
+    { "id": 1, "title": "React Basics", "author": "Aman" },
+    { "id": 2, "title": "Next.js Cache", "author": "Rohit" }
+  ]
+}
