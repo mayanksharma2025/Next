@@ -1,24 +1,30 @@
 {
   "users": [
     {
-      "id": "1",
-      "name": "Aman"
+      "id": "u1",
+      "email": "aman@test.com",
+      "role": "admin",
+      "orgId": "org1"
     },
     {
-      "id": "2",
-      "name": "Rohit"
+      "id": "u2",
+      "email": "rohit@test.com",
+      "role": "member",
+      "orgId": "org1"
+    }
+  ],
+  "orgs": [
+    {
+      "id": "org1",
+      "name": "Acme Inc",
+      "plan": "free"
     }
   ],
   "projects": [
     {
       "id": "p1",
-      "userId": "1",
-      "title": "Dashboard App"
-    },
-    {
-      "id": "p2",
-      "userId": "2",
-      "title": "Ecommerce App"
+      "orgId": "org1",
+      "title": "Dashboard"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

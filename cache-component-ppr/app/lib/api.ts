@@ -2,6 +2,7 @@
 import { cacheLife } from "next/cache";
 import { User } from "@/app/types/user";
 import { Project, UserWithProjects } from "@/app/types";
+import type { Org } from "@/app/types";
 
 export async function getUsers() {
   "use cache";
@@ -67,3 +68,15 @@ export async function getUserProjects(
 
 //   return res.json();
 // }
+
+export async function getOrg(orgId: string): Promise<Org> {
+  const res = await fetch(`http://localhost:4000/orgs/${orgId}`);
+  if (!res.ok) throw new Error("Org fetch failed");
+  return res.json();
+}
+
+export async function getProjects(orgId: string): Promise<Project[]> {
+  const res = await fetch(`http://localhost:4000/projects?orgId=${orgId}`);
+  if (!res.ok) throw new Error("Projects fetch failed");
+  return res.json();
+}

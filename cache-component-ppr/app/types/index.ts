@@ -15,3 +15,25 @@ export type UserWithProjects = {
   name: string;
   projects: Project[];
 };
+
+// types/index.ts
+export type Role = "admin" | "member";
+
+export interface User {
+  id: string;
+  email: string;
+  role: Role;
+  orgId: string;
+}
+
+export interface Org {
+  id: string;
+  name: string;
+  plan: "free" | "pro";
+}
+
+export interface Project {
+  id: string;
+  orgId: string;
+  title: string;
+}

@@ -1,33 +1,32 @@
 // app/page.tsx
 import { Suspense } from "react";
-import { cookies } from "next/headers";
-import { Projects } from "./components/Projects";
-import { AddProjectForm } from "./components/AddProjectForm";
+import { getSessionUser } from "@/app/lib/auth";
+import { OrgInfo } from "./components/OrgInfo";
+import { ProjectsSection } from "./components/ProjectsSection";
 import UserSetter from "./components/UserSetter";
 
 export default function Page() {
   return (
     <main style={{ padding: 20 }}>
       <h1>SaaS Dashboard</h1>
-
-      <Suspense fallback={<p>Loading dashboard...</p>}>
+      <h2>Add User ID Either u1 or u2</h2>
+      <UserSetter />
+      <Suspense fallback={<p>Loading...</p>}>
         <Dashboard />
       </Suspense>
     </main>
   );
 }
 
-// 🔴 Runtime layer
 async function Dashboard() {
-  const userId = (await cookies()).get("userId")?.value;
+  const user = await getSessionUser();
 
-  if (!userId) return <p>No user logged in</p>;
+  if (!user) return <p>Please login</p>;
 
   return (
     <>
-      <UserSetter />
-      <AddProjectForm userId={userId} />
-      <Projects userId={userId} />
+      <OrgInfo orgId={user.orgId} />
+      <ProjectsSection userId={user.id} orgId={user.orgId} />
     </>
   );
 }

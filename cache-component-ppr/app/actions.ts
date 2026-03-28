@@ -43,3 +43,35 @@ export async function addProject(formData: FormData) {
   // 🔥 fine-grained invalidation
   updateTag(`projects-user-${userId}`);
 }
+
+// // app/actions.ts
+// "use server";
+
+// import { updateTag } from "next/cache";
+
+export async function createProject(formData: FormData) {
+  const title = formData.get("title") as string;
+  const orgId = formData.get("orgId") as string;
+
+  if (!title || !orgId) return;
+
+  await fetch("http://localhost:4000/projects", {
+    method: "POST",
+    body: JSON.stringify({ title, orgId }),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  // 🔥 invalidate only this org
+  updateTag(`projects-org-${orgId}`);
+}
+
+export async function upgradePlan(orgId: string) {
+  // simulate billing success
+  await fetch(`http://localhost:4000/orgs/${orgId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ plan: "pro" }),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  updateTag(`org-${orgId}`);
+}
