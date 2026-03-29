@@ -1,10 +1,10 @@
 "use client";
 
 import { useOptimistic, useTransition } from "react";
-import { addPostWithUpdate } from "../action";
+import { addPostWithUpdate } from "@/app/action";
 import { Post } from "@/types/post";
 
-export default function OptimisticForm({ posts }: any) {
+export default function OptimisticUI({ posts }: any) {
   const [isPending, startTransition] = useTransition();
 
   const [optimisticPosts, addOptimisticPost] = useOptimistic(
@@ -13,7 +13,9 @@ export default function OptimisticForm({ posts }: any) {
   );
 
   return (
-    <>
+    <div className="space-y-5 my-3">
+      <h2>Optimistic UI (updateTag)</h2>
+
       <ul>
         {optimisticPosts.map((p: Post) => (
           <li key={p.id}>{p.title}</li>
@@ -24,21 +26,23 @@ export default function OptimisticForm({ posts }: any) {
         action={(formData) => {
           const title = formData.get("title");
 
-          // 1. optimistic update
-          addOptimisticPost({
-            id: "temp-" + Date.now(),
-            title,
-          });
+          // optimistic update
+          addOptimisticPost({ id: "temp-" + Date.now(), title });
 
-          // 2. server sync
           startTransition(() => {
             addPostWithUpdate(formData);
           });
         }}
       >
-        <input name="title" className="border" />
-        <button disabled={isPending}>{isPending ? "Adding..." : "Add"}</button>
+        <input
+          name="title"
+          placeholder="Optimistic title"
+          className="p-2 mx-2"
+        />
+        <button disabled={isPending} className="border p-2 rounded-md">
+          {isPending ? "Adding..." : "Add"}
+        </button>
       </form>
-    </>
+    </div>
   );
 }
