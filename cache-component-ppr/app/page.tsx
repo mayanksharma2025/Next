@@ -3,6 +3,7 @@ import { addPostWithUpdate } from "./action";
 import { Suspense } from "react";
 import { AddPostForm } from "./components/AddPostForm";
 import { cacheLife } from "next/cache";
+import OptimisticForm from "./components/OptimisticForm";
 
 export async function getCachedPosts(): Promise<Post[]> {
   "use cache";
@@ -20,7 +21,7 @@ async function Posts() {
   const posts = await getCachedPosts();
 
   return (
-    <>
+    <div className="flex space-x-8">
       <h1>Posts</h1>
 
       <ul>
@@ -28,7 +29,9 @@ async function Posts() {
           <li key={p.id}>{p.title}</li>
         ))}
       </ul>
-    </>
+      <h1>Optimistic Posts</h1>
+      <OptimisticForm posts={posts} />
+    </div>
   );
 }
 
