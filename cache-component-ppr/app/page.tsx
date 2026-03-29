@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { AddPostForm } from "./components/AddPostForm";
 import { cacheLife } from "next/cache";
 import OptimisticForm from "./components/OptimisticForm";
+import SWRPosts from "./components/SWRPosts";
 
 export async function getCachedPosts(): Promise<Post[]> {
   "use cache";
@@ -31,6 +32,9 @@ async function Posts() {
       </ul>
       <h1>Optimistic Posts</h1>
       <OptimisticForm posts={posts} />
+
+      <h1>SWR Posts</h1>
+      <SWRPosts />
     </div>
   );
 }
