@@ -1,34 +1,26 @@
-// app/actions.ts (optimistic-safe mutations + versioning)
+// app/actions.ts (SERVER ACTIONS ONLY)
 "use server";
 
-import { updateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 
-export async function addProjectOptimistic(input: {
-  tempId: string;
-  title: string;
-}) {
-  // simulate network latency (race visibility)
-  await new Promise((r) => setTimeout(r, 800));
+export async function upgradePlan() {
+  await fetch("http://localhost:4000/orgs/org1", {
+    method: "PATCH",
+    body: JSON.stringify({ plan: "pro" }),
+  });
 
-  // simulate random failure (rollback test)
-  const shouldFail = Math.random() < 0.3;
-  if (shouldFail) {
-    return { ok: false };
-  }
+  (revalidateTag as any)("org");
+}
 
-  const realId = Date.now().toString();
-
+export async function addProjectServer() {
   await fetch("http://localhost:4000/projects", {
     method: "POST",
     body: JSON.stringify({
-      id: realId,
+      id: Date.now().toString(),
       orgId: "org1",
-      title: input.title,
-      version: Date.now(), // version for race handling
+      title: "New Project",
     }),
   });
 
-  updateTag("projects");
-
-  return { ok: true, realId };
+  (revalidateTag as any)("projects");
 }

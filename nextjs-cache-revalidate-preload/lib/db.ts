@@ -1,10 +1,16 @@
-// lib/data.ts (unchanged base, + version awareness)
-import { cacheTag } from "next/cache";
+// lib/data.ts (SERVER ONLY)
+export async function getOrg() {
+  const res = await fetch("http://localhost:4000/orgs/org1", {
+    cache: "force-cache",
+    next: { tags: ["org"] },
+  });
+  return res.json();
+}
 
 export async function getProjects() {
-  "use cache";
-  cacheTag("projects");
-
-  const res = await fetch("http://localhost:4000/projects");
+  const res = await fetch("http://localhost:4000/projects", {
+    cache: "force-cache",
+    next: { tags: ["projects"] },
+  });
   return res.json();
 }
