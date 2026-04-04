@@ -11,3 +11,30 @@ export async function readDB() {
 export async function writeDB(data: any) {
   await fs.writeFile(dbPath, JSON.stringify(data, null, 2));
 }
+
+// lib/data.ts (Cache Components model)
+import { cacheTag } from "next/cache";
+
+export async function getUsers() {
+  "use cache";
+  cacheTag("users");
+
+  const res = await fetch("http://localhost:4000/users");
+  return res.json();
+}
+
+export async function getOrgs() {
+  "use cache";
+  cacheTag("orgs");
+
+  const res = await fetch("http://localhost:4000/orgs");
+  return res.json();
+}
+
+export async function getProjects() {
+  "use cache";
+  cacheTag("projects");
+
+  const res = await fetch("http://localhost:4000/projects");
+  return res.json();
+}

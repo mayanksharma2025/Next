@@ -1,5 +1,5 @@
 // app/page.tsx
-import { getUsers, getOrgs, getProjects } from "@/lib/api";
+import { getUsers, getOrgs, getProjects } from "@/lib/db";
 import { addProject, updateOrgPlan } from "./actions";
 
 export default async function Page() {
@@ -8,15 +8,15 @@ export default async function Page() {
   const projects = await getProjects();
 
   return (
-    <div className="p-6 space-y-8 bg-gray-50 text-black min-h-screen">
+    <div className="min-h-screen bg-gray-500 text-slate-800 p-6 space-y-8">
       <h1 className="text-3xl font-bold">SaaS Dashboard</h1>
 
-      {/* Users */}
-      <div className="bg-white shadow rounded-xl p-5">
+      {/* USERS */}
+      <div className="bg-white rounded-xl shadow p-5">
         <h2 className="text-xl font-semibold mb-4">Users</h2>
 
         <div className="overflow-x-auto">
-          <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
+          <table className="w-full border border-gray-200 rounded-lg">
             <thead className="bg-gray-100 text-left">
               <tr>
                 <th className="p-3">Email</th>
@@ -27,7 +27,11 @@ export default async function Page() {
               {users.map((u: any) => (
                 <tr key={u.id} className="border-t hover:bg-gray-50">
                   <td className="p-3">{u.email}</td>
-                  <td className="p-3">{u.role}</td>
+                  <td className="p-3">
+                    <span className="px-2 py-1 text-sm rounded bg-blue-100 text-blue-700">
+                      {u.role}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -35,8 +39,8 @@ export default async function Page() {
         </div>
       </div>
 
-      {/* Organization */}
-      <div className="bg-white shadow rounded-xl p-5">
+      {/* ORGS */}
+      <div className="bg-white rounded-xl shadow p-5">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Organization</h2>
 
@@ -48,7 +52,7 @@ export default async function Page() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
+          <table className="w-full border border-gray-200 rounded-lg">
             <thead className="bg-gray-100 text-left">
               <tr>
                 <th className="p-3">Name</th>
@@ -59,7 +63,11 @@ export default async function Page() {
               {orgs.map((o: any) => (
                 <tr key={o.id} className="border-t hover:bg-gray-50">
                   <td className="p-3">{o.name}</td>
-                  <td className="p-3">{o.plan}</td>
+                  <td className="p-3">
+                    <span className="px-2 py-1 text-sm rounded bg-green-100 text-green-700">
+                      {o.plan}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -67,8 +75,8 @@ export default async function Page() {
         </div>
       </div>
 
-      {/* Projects */}
-      <div className="bg-white shadow rounded-xl p-5">
+      {/* PROJECTS */}
+      <div className="bg-white rounded-xl shadow p-5">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Projects</h2>
 
@@ -80,7 +88,7 @@ export default async function Page() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
+          <table className="w-full border border-gray-200 rounded-lg">
             <thead className="bg-gray-100 text-left">
               <tr>
                 <th className="p-3">Title</th>
@@ -98,14 +106,4 @@ export default async function Page() {
       </div>
     </div>
   );
-}
-
-{
-  /*
-    cached fetch (force-cache)
-    tag-based invalidation (revalidateTag)
-    multi-entity invalidation (users/orgs/projects separate)
-    mutation → UI refresh
-    cross-route cache consistency (/ vs /projects)
-*/
 }

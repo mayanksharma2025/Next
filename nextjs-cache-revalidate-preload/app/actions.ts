@@ -1,26 +1,26 @@
+// app/actions.ts (NEW invalidation model)
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
-type RevalidateTagType = Parameters<typeof revalidateTag>[0];
+import { updateTag } from "next/cache";
 
 export async function addProject() {
-  await fetch("http://localhost:3000/api/projects", {
+  await fetch("http://localhost:4000/projects", {
     method: "POST",
+    body: JSON.stringify({
+      id: Date.now().toString(),
+      orgId: "org1",
+      title: "New Project",
+    }),
   });
 
-  (revalidateTag as any)("projects");
-  //   revalidatePath("/");
+  updateTag("projects");
 }
 
 export async function updateOrgPlan() {
-  await fetch("http://localhost:3000/api/orgs/org1", {
+  await fetch("http://localhost:4000/orgs/org1", {
     method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ plan: "pro" }),
+    body: JSON.stringify({ plan: "free" }),
   });
-  console.log("updateOrgPlan");
 
-  (revalidateTag as any)("orgs");
+  updateTag("orgs");
 }
