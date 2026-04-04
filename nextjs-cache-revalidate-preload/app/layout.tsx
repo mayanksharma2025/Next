@@ -31,3 +31,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+// npx json-server db.json --watch --port 4000
