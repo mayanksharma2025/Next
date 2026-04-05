@@ -3,6 +3,7 @@
     {
       "id": "u1",
       "email": "aman@test.com",
+      "name": "aman",
       "role": "admin",
       "orgId": "org1",
       "theme": "dark"
@@ -10,10 +11,13 @@
     {
       "id": "u2",
       "email": "rohit@test.com",
+      "name": "rohit",
+
       "role": "member",
       "orgId": "org1"
     }
   ],
+  "posts": [{ "id": "p1", "title": "Hello World", "userId": "u1" }],
   "orgs": [
     {
       "id": "org1",

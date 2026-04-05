@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+export const fetchCache = "auto"; // parent safe default
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -33,3 +35,30 @@ export default function RootLayout({
 }
 
 // npx json-server db.json --watch --port 4000
+
+{
+  /*
+    ✔️ What this example shows
+
+    1. fetch caching
+      fetch(..., { cache: 'force-cache' })
+
+    2. unstable_cache (DB caching)
+      unstable_cache(fn, ['key'], { tags, revalidate })
+
+    3. route config
+      / → auto
+      /static → force-static + only-cache
+      /dynamic → force-dynamic + no-store
+
+    4. fetchCache behavior
+      only-cache → error if no-store used
+      force-no-store → always dynamic
+      auto → mixed behavior
+
+    5. real behavior to test
+      /static → never refetch
+      /dynamic → always refetch
+      / → mixed (depends on fetch)
+  */
+}
