@@ -1,18 +1,19 @@
-// lib/db.ts (simulate DB layer)
+// lib/db.ts (simulate DB query layer)
 import { unstable_cache } from "next/cache";
-export async function getUserFromDB(id: string) {
-  const res = await fetch(`http://localhost:4000/users/${id}`);
+
+export async function getOrdersFromDB() {
+  const res = await fetch("http://localhost:4000/orders");
   return res.json();
 }
 
-// 🔹 unstable_cache (non-fetch caching)
-export const getCachedUser = unstable_cache(
-  async (id: string) => {
-    return getUserFromDB(id);
+// 🔹 cache DB query (orders)
+export const getCachedOrders = unstable_cache(
+  async () => {
+    return getOrdersFromDB();
   },
-  ["user"],
+  ["orders"],
   {
-    tags: ["user"],
-    revalidate: 60,
+    tags: ["orders"],
+    revalidate: 30,
   },
 );

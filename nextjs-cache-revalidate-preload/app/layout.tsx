@@ -38,27 +38,33 @@ export default function RootLayout({
 
 {
   /*
-    ✔️ What this example shows
+   ✔️ What this example teaches 
 
     1. fetch caching
-      fetch(..., { cache: 'force-cache' })
+      force-cache → products cached
 
-    2. unstable_cache (DB caching)
-      unstable_cache(fn, ['key'], { tags, revalidate })
+    2. unstable_cache
+      orders cached separately
+      has tags + revalidate
 
-    3. route config
-      / → auto
-      /static → force-static + only-cache
-      /dynamic → force-dynamic + no-store
+    3. fetchCache modes
+      default-cache → cached by default
+      default-no-store → not cached unless forced
 
-    4. fetchCache behavior
-      only-cache → error if no-store used
-      force-no-store → always dynamic
-      auto → mixed behavior
+    4. dynamic modes
+      auto → mixed
+      error → only static allowed
 
-    5. real behavior to test
-      /static → never refetch
-      /dynamic → always refetch
-      / → mixed (depends on fetch)
+    5. real behavior
+      / → hybrid caching
+      /mixed → compare cached vs non-cached
+      /error → strict static enforcement
+
+    This example gives you:
+
+      different domain (e-commerce)
+      same concepts
+      practical differences visible in UI + network
+
   */
 }
