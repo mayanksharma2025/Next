@@ -1,7 +1,7 @@
-// app/static/page.tsx (CHILD ✅ VALID STATIC)
+// app/conflict-fetch/page.tsx (CHILD ❌ FETCH CONFLICT)
 export const dynamic = "force-static";
-export const fetchCache = "force-cache";
-// ✅ matches parent intent
+export const fetchCache = "only-no-store";
+// ❗ static route but forbids cache
 
 export default async function Page() {
   const data = await fetch("http://localhost:4000/products").then((r) =>
@@ -10,7 +10,7 @@ export default async function Page() {
 
   return (
     <div className="p-6 space-y-4">
-      <h1 className="text-3xl">✅ Fully Static</h1>
+      <h1 className="text-3xl">❌ Static + No-Store Conflict</h1>
       {data.map((p: any) => (
         <div key={p.id}>{p.name}</div>
       ))}

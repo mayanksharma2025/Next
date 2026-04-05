@@ -3,7 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 export const dynamic = "force-static";
-// ❗ parent: fully static
+export const fetchCache = "only-cache";
+// ❗ parent: fully STATIC + only cached fetch allowed
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,36 +40,52 @@ export default function RootLayout({
 
 {
   /*
-    ❌ Case 1: Parent vs Child conflict
-      Parent → force-static
-      Child → force-dynamic
+    ❌ Case 1: Full conflict
+      Parent → force-static + only-cache
+      Child → force-dynamic + no-store
+      👉 ❌ completely opposite → error
 
-    👉 ❌ not allowed
-    ✅ Case 2: Match parent
-      Parent → force-static
-      Child → force-static
+    ❌ Case 2: Fetch conflict inside static
+      Static route
+      but only-no-store
+      👉 ❌ invalid (static cannot be no-store)
 
-    👉 ✅ works
-    ⚠️ Case 3: auto
-      Parent → force-static
-      Child → auto
+    ✅ Case 3: Valid static
+      Static + cache
+      👉 ✅ works
 
-    👉 ✅ works (inherits static behavior)
-    ❌ Case 4: breaking static rules
-      Page marked static
-      but uses no-store
+    ✅ Case 4: Force override
+      Child uses force-dynamic
+      👉 ✅ overrides parent
 
-    👉 ❌ runtime error
-    ✔️ Rule (from your article, now visual)
+    ⚠️ Case 5: Safe mixed
+      auto + default-cache
+      👉 ✅ does not break parent
 
-      force-static = strict → no dynamic allowed
-      force-dynamic = always runtime → cannot mix with static parent
-      auto = safe middle → adapts
-      Static route + dynamic fetch = ❌ error
+    ✔️ Final rule (from your article, now fully clear)
+      dynamic controls rendering mode
+      fetchCache controls data behavior
+      Both must align
 
-    This shows:
-      dynamic route conflicts
-      how static/dynamic propagate
-      why Next.js throws errors
+
+      🚨 Conflict patterns
+
+      | dynamic       | fetchCache     | Result |
+      | ------------- | -------------- | ------ |
+      | force-static  | only-no-store  | ❌      |
+      | force-static  | force-no-store | ❌      |
+      | force-dynamic | only-cache     | ❌      |
+      | force-dynamic | force-cache    | ❌      |
+
+      ✅ Valid patterns
+
+      | dynamic       | fetchCache     |
+      | ------------- | -------------- |
+      | force-static  | only-cache     |
+      | force-static  | force-cache    |
+      | force-dynamic | force-no-store |
+      | auto          | default-cache  |
+
+
   */
 }

@@ -1,35 +1,19 @@
-// app/mixed/page.tsx
+// app/mixed/page.tsx (CHILD ⚠️ SAFE MIX)
 export const dynamic = "auto";
-export const fetchCache = "default-no-store";
+export const fetchCache = "default-cache";
+// ✅ compatible with parent (doesn't break rules)
 
-export default async function MixedPage() {
-  // 🔹 no cache by default (because default-no-store)
-  const products = await fetch("http://localhost:4000/products").then((res) =>
-    res.json(),
-  );
-
-  // 🔹 explicitly cached
-  const cachedProducts = await fetch("http://localhost:4000/products", {
+export default async function Page() {
+  const data = await fetch("http://localhost:4000/products", {
     cache: "force-cache",
-  }).then((res) => res.json());
+  }).then((r) => r.json());
 
   return (
     <div className="p-6 space-y-4">
-      <h1 className="text-xl font-bold">Mixed Cache Behavior</h1>
-
-      <div>
-        <h2>No Cache (default-no-store)</h2>
-        {products.map((p: any) => (
-          <div key={p.id}>{p.name}</div>
-        ))}
-      </div>
-
-      <div>
-        <h2>Forced Cache</h2>
-        {cachedProducts.map((p: any) => (
-          <div key={p.id}>{p.name}</div>
-        ))}
-      </div>
+      <h1 className="text-3xl">⚠️ Mixed but Safe</h1>
+      {data.map((p: any) => (
+        <div key={p.id}>{p.name}</div>
+      ))}
     </div>
   );
 }
