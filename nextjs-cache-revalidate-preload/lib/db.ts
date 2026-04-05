@@ -1,16 +1,16 @@
-// lib/data.ts (SERVER ONLY)
-export async function getOrg() {
-  const res = await fetch("http://localhost:4000/orgs/org1", {
+// lib/data.ts
+export async function getUser() {
+  const res = await fetch("http://localhost:4000/users/u1", {
     cache: "force-cache",
-    next: { tags: ["org"] },
+    next: { tags: ["user"] },
   });
   return res.json();
 }
 
-export async function getProjects() {
-  const res = await fetch("http://localhost:4000/projects", {
+export async function getActivities() {
+  const res = await fetch("http://localhost:4000/activities", {
     cache: "force-cache",
-    next: { tags: ["projects"] },
+    next: { tags: ["activities"] },
   });
   return res.json();
 }

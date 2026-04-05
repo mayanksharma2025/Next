@@ -1,72 +1,73 @@
 // app/page.tsx
-import { getOrg, getProjects } from "@/lib/db";
-import { upgradePlan, addProjectServer } from "./actions";
-import AddProjectButton from "./AddProjectButton";
+import { getUser, getActivities } from "@/lib/db";
+import { updateTheme, addActivity, resetEverything } from "./actions";
 
 export default async function Page() {
-  const org = await getOrg();
-  const projects = await getProjects();
+  const user = await getUser();
+  const activities = await getActivities();
 
   return (
-    <div className="min-h-screen bg-gray-200 text-slate-800 p-6 space-y-8">
-      {/* Header */}
-      <div className="bg-white shadow rounded-xl p-6">
-        <h1 className="text-3xl font-bold">{org.name}</h1>
+    <div className="min-h-screen bg-gray-600 p-6 text-slate-800 space-y-8">
+      {/* USER CARD */}
+      <div className="bg-white shadow rounded-xl p-6 space-y-4">
+        <h1 className="text-2xl font-bold">User Profile</h1>
 
-        <div className="flex items-center justify-between mt-4">
-          <p className="text-lg">
-            Plan:{" "}
-            <span className="px-2 py-1 rounded bg-green-100 text-green-700 text-sm">
-              {org.plan}
+        <div className="space-y-1 text-lg">
+          <p>
+            Name: <span className="font-medium">{user.name}</span>
+          </p>
+          <p>
+            Theme:{" "}
+            <span className="px-2 py-1 rounded bg-gray-100 text-sm">
+              {user.theme}
             </span>
           </p>
+        </div>
 
-          {/* Server Action Form */}
-          {/* ✅ server form (SEO safe) */}
+        <form action={updateTheme}>
+          <button className="mt-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+            Switch to Dark Theme
+          </button>
+        </form>
+      </div>
 
-          <form action={upgradePlan}>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer">
-              Upgrade Plan
+      {/* ACTIVITY FEED */}
+      <div className="bg-white shadow rounded-xl p-6 space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Activity Feed</h2>
+
+          <form action={addActivity}>
+            <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+              Add Activity
             </button>
           </form>
         </div>
+
+        <div className="space-y-3">
+          {activities.length > 0 ? (
+            activities.map((a: any) => (
+              <div
+                key={a.id}
+                className="p-3 rounded-lg bg-gray-100 text-gray-800"
+              >
+                {a.text}
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500">No activities yet</p>
+          )}
+        </div>
       </div>
 
-      {/* Projects */}
+      {/* RESET */}
       <div className="bg-white shadow rounded-xl p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Projects</h2>
+        <h3 className="text-lg font-semibold mb-3">Danger Zone</h3>
 
-          {/* Client button */}
-          {/* ✅ minimal client only for UX */}
-
-          <AddProjectButton action={addProjectServer} />
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full border border-gray-200 rounded-lg">
-            <thead className="bg-gray-100 text-left">
-              <tr>
-                <th className="p-3">Project Title</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {/* ✅ fully server rendered list */}
-
-              {projects.map((p: any) => (
-                <tr key={p.id} className="border-t hover:bg-gray-50">
-                  <td className="p-3">{p.title}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Empty state */}
-        {projects.length === 0 && (
-          <p className="text-gray-500 mt-4">No projects found</p>
-        )}
+        <form action={resetEverything}>
+          <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
+            Reset Everything (revalidatePath)
+          </button>
+        </form>
       </div>
     </div>
   );

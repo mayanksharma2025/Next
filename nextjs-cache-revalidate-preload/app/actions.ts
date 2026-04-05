@@ -1,26 +1,41 @@
-// app/actions.ts (SERVER ACTIONS ONLY)
+// app/actions.ts
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 
-export async function upgradePlan() {
-  await fetch("http://localhost:4000/orgs/org1", {
+// 🔹 update user setting (theme change)
+export async function updateTheme() {
+  await fetch("http://localhost:4000/users/u1", {
     method: "PATCH",
-    body: JSON.stringify({ plan: "pro" }),
+    body: JSON.stringify({ theme: "dark" }),
   });
 
-  (revalidateTag as any)("org");
+  // only user data changes
+  (revalidateTag as any)("user");
 }
 
-export async function addProjectServer() {
-  await fetch("http://localhost:4000/projects", {
+// 🔹 add activity log
+export async function addActivity() {
+  await fetch("http://localhost:4000/activities", {
     method: "POST",
     body: JSON.stringify({
       id: Date.now().toString(),
-      orgId: "org1",
-      title: "New Project",
+      userId: "u1",
+      text: "Clicked button",
     }),
   });
 
-  (revalidateTag as any)("projects");
+  // only activity list changes
+  (revalidateTag as any)("activities");
+}
+
+// 🔹 full page reset case (rare real-world)
+export async function resetEverything() {
+  await fetch("http://localhost:4000/users/u1", {
+    method: "PATCH",
+    body: JSON.stringify({ theme: "light" }),
+  });
+
+  // force entire page refresh
+  revalidatePath("/");
 }

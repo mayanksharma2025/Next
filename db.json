@@ -4,7 +4,8 @@
       "id": "u1",
       "email": "aman@test.com",
       "role": "admin",
-      "orgId": "org1"
+      "orgId": "org1",
+      "theme": "dark"
     },
     {
       "id": "u2",
@@ -25,6 +26,13 @@
       "id": "p1",
       "orgId": "org1",
       "title": "Dashboard"
+    }
+  ],
+  "activities": [
+    {
+      "id": "a1",
+      "userId": "u1",
+      "text": "Logged in"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
