@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-export const fetchCache = "auto"; // parent safe default
+export const fetchCache = "default-no-store";
+// ❗ parent says: default = NO CACHE
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,33 +39,38 @@ export default function RootLayout({
 
 {
   /*
-   ✔️ What this example teaches 
+    👉 ✅ works
+    ❌ Case 1: Conflict
+      Parent → default-no-store
+      Child → auto
 
-    1. fetch caching
-      force-cache → products cached
+    👉 ❌ not allowed (same fetch can behave differently)
+    ✅ Case 2: Fixed
+      Parent → default-no-store
+      Child → default-no-store
 
-    2. unstable_cache
-      orders cached separately
-      has tags + revalidate
+    👉 ✅ works
+    ✅ Case 3: Force override
+      Parent → default-no-store
+      Child → force-cache
 
-    3. fetchCache modes
-      default-cache → cached by default
-      default-no-store → not cached unless forced
+    👉 ✅ works (force wins rule)
+    ❌ Case 4: Illegal combo
+      Parent → default-no-store
+      Child → only-cache
 
-    4. dynamic modes
-      auto → mixed
-      error → only static allowed
+    👉 ❌ not allowed (mixed static + dynamic)
+    ✔️ Core rule (from your article, now visible)
+      Parent restricts
+      Child must follow OR force override
+      only-* cannot mix with opposite mode
+      force-* can override safely
 
-    5. real behavior
-      / → hybrid caching
-      /mixed → compare cached vs non-cached
-      /error → strict static enforcement
+    This example directly demonstrates:
 
-    This example gives you:
-
-      different domain (e-commerce)
-      same concepts
-      practical differences visible in UI + network
-
+      cross-route segment behavior
+      parent vs child conflict
+      only-* vs force-*
+      why Next.js throws errors
   */
 }
