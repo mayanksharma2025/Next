@@ -1,17 +1,17 @@
-// app/static/page.tsx
+// app/static/page.tsx (CHILD ✅ MATCH STATIC)
 export const dynamic = "force-static";
-export const fetchCache = "only-cache";
+// ✅ matches parent
 
-export default async function StaticPage() {
-  const posts = await fetch("http://localhost:4000/posts").then((res) =>
-    res.json(),
-  );
+export default async function Page() {
+  const data = await fetch("http://localhost:4000/products", {
+    cache: "force-cache",
+  }).then((r) => r.json());
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold">Static Page</h1>
-      {posts.map((p: any) => (
-        <div key={p.id}>{p.title}</div>
+    <div className="p-6 space-y-4">
+      <h1 className="text-xl font-bold">Static OK</h1>
+      {data.map((p: any) => (
+        <div key={p.id}>{p.name}</div>
       ))}
     </div>
   );

@@ -1,15 +1,15 @@
-// app/illegal/page.tsx (CHILD ❌ BREAK STATIC)
-export const dynamic = "force-static";
+// app/auto/page.tsx (CHILD ⚠️ SAFE)
+export const dynamic = "auto";
+// ✅ allowed (does not break parent)
 
 export default async function Page() {
-  // ❌ using dynamic data inside static route
   const data = await fetch("http://localhost:4000/products", {
-    cache: "no-store",
+    cache: "force-cache",
   }).then((r) => r.json());
 
   return (
     <div className="p-6 space-y-4">
-      <h1 className="text-xl font-bold">Illegal Static Usage</h1>
+      <h1 className="text-xl font-bold">Auto (inherits static behavior)</h1>
       {data.map((p: any) => (
         <div key={p.id}>{p.name}</div>
       ))}

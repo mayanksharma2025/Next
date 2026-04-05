@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-export const fetchCache = "default-no-store";
-// ❗ parent says: default = NO CACHE
+export const dynamic = "force-static";
+// ❗ parent: fully static
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,38 +39,36 @@ export default function RootLayout({
 
 {
   /*
+    ❌ Case 1: Parent vs Child conflict
+      Parent → force-static
+      Child → force-dynamic
+
+    👉 ❌ not allowed
+    ✅ Case 2: Match parent
+      Parent → force-static
+      Child → force-static
+
     👉 ✅ works
-    ❌ Case 1: Conflict
-      Parent → default-no-store
+    ⚠️ Case 3: auto
+      Parent → force-static
       Child → auto
 
-    👉 ❌ not allowed (same fetch can behave differently)
-    ✅ Case 2: Fixed
-      Parent → default-no-store
-      Child → default-no-store
+    👉 ✅ works (inherits static behavior)
+    ❌ Case 4: breaking static rules
+      Page marked static
+      but uses no-store
 
-    👉 ✅ works
-    ✅ Case 3: Force override
-      Parent → default-no-store
-      Child → force-cache
+    👉 ❌ runtime error
+    ✔️ Rule (from your article, now visual)
 
-    👉 ✅ works (force wins rule)
-    ❌ Case 4: Illegal combo
-      Parent → default-no-store
-      Child → only-cache
+      force-static = strict → no dynamic allowed
+      force-dynamic = always runtime → cannot mix with static parent
+      auto = safe middle → adapts
+      Static route + dynamic fetch = ❌ error
 
-    👉 ❌ not allowed (mixed static + dynamic)
-    ✔️ Core rule (from your article, now visible)
-      Parent restricts
-      Child must follow OR force override
-      only-* cannot mix with opposite mode
-      force-* can override safely
-
-    This example directly demonstrates:
-
-      cross-route segment behavior
-      parent vs child conflict
-      only-* vs force-*
+    This shows:
+      dynamic route conflicts
+      how static/dynamic propagate
       why Next.js throws errors
   */
 }
