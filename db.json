@@ -16,6 +16,16 @@
       "orgId": "org1"
     }
   ],
+
+  "projects": [
+    { "id": "pr1", "name": "Dashboard Revamp" },
+    { "id": "pr2", "name": "Website Redesign" }
+  ],
+  "tasks": [
+    { "id": "t1", "projectId": "pr1", "title": "Setup UI" },
+    { "id": "t2", "projectId": "pr1", "title": "API Integration" },
+    { "id": "t3", "projectId": "pr2", "title": "Create Wireframes" }
+  ],
   "posts": [
     {
       "id": "p1",
@@ -46,13 +56,6 @@
       "id": "org1",
       "name": "Acme Inc",
       "plan": "free"
-    }
-  ],
-  "projects": [
-    {
-      "id": "p1",
-      "orgId": "org1",
-      "title": "Dashboard"
     }
   ],
   "activities": [

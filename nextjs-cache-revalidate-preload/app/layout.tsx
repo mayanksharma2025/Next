@@ -41,52 +41,64 @@ export default function RootLayout({
 {
   /*
 
-  ✅ Deduplication using cache()
-  ✅ Preloading pattern
+  ✔️ What makes this real-world advanced
+    🔁 1. Multiple components → same data
+      ProjectHeader
+      TasksList
+      TaskItem
 
+  👉 all reuse same cached functions
 
-   🔁 1. Deduplication (MOST IMPORTANT)
-    ->  getItem(id) called multiple times
-    ->  BUT terminal logs:
+    Result:
 
-    DB CALL: 1
-    👉 Only ONE DB call per request
+    DB PROJECT: pr1
+    DB TASKS: pr1
 
-    ⚡ 2. Preloading
+  👉 only ONE call each
 
-      preload(id)
+  ⚡ 2. Preloading removes waterfall
 
-    ->  starts DB fetch before UI waits
-    ->  while checkIsAvailable() runs
+    Without preload:
 
-    👉 improves performance (parallel work)
+    auth → project → tasks → render
 
-    🧠 Flow (what actually happens)
+    With preload:
 
-    ->  preload(id) → starts fetch
-    ->  checkIsAvailable() runs (1s delay)
-    ->  Item calls getItem(id)
-    ->  Data is already ready or reused
+    (project + tasks) + auth → render
 
-    ✔️ Core concepts (from your article)
+    👉 parallel execution
 
-    ✅ cache()
-    ->  deduplicates same function calls
-    ->  per request lifecycle
+    🧠 3. Deep deduplication
 
-    ✅ preload()
-    ->  starts fetch early
-    ->  avoids waterfall
+    Even inside loop:
 
-    ⚠️ Important
-    ->  works only in server components
-    ->  not global cache (only request-level)
+    TaskItem → getCachedTasks(id)
 
-    This is exactly:
+   👉 still NO extra DB calls
 
-    ->  deduplication
-    ->  preload pattern
-      → fully practical, no extra abstraction.
+🏗️ 4. Real SaaS pattern
 
+  project page
+  tasks list
+  permission check
+
+shared data across components
+
+  ✔️ What you learned (strictly from your article)
+✅ cache()
+  dedupe across whole tree
+  even nested components
+
+✅ preload()
+  start early
+  remove waterfalls
+
+✅ combination
+  preload + cache = production pattern
+
+  This is how real dashboards are built using only:
+
+  cache()
+  preload()
   */
 }
