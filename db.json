@@ -30,6 +30,10 @@
       "price": 50000
     }
   ],
+  "items": [
+    { "id": "1", "name": "Laptop" },
+    { "id": "2", "name": "Phone" }
+  ],
   "orders": [
     {
       "id": "o1",

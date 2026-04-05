@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-export const dynamic = "force-static";
-export const fetchCache = "only-cache";
+// export const dynamic = "force-static";
+// export const fetchCache = "only-cache";
 // ❗ parent: fully STATIC + only cached fetch allowed
 
 const geistSans = Geist({
@@ -41,51 +41,52 @@ export default function RootLayout({
 {
   /*
 
-  focused working example using ONLY your article concepts
-→ covers:
+  ✅ Deduplication using cache()
+  ✅ Preloading pattern
 
-    next.revalidate
-    route revalidate
-    unstable_cache revalidate
-    revalidateTag
-    revalidatePath
 
-   ⏱ 1. fetch revalidation
-      next: { revalidate: 10 }
-      user updates every 10 seconds automatically
+   🔁 1. Deduplication (MOST IMPORTANT)
+    ->  getItem(id) called multiple times
+    ->  BUT terminal logs:
 
-    ⏱ 2. unstable_cache revalidation
-      revalidate: 20
-      posts update every 20 seconds
+    DB CALL: 1
+    👉 Only ONE DB call per request
 
-    ⏱ 3. route-level revalidate
-      export const revalidate = 60
-      page tries to revalidate every 60 sec
-      BUT overridden by lower values below 👇
+    ⚡ 2. Preloading
 
-    ⚠️ 4. Lowest wins rule
-      user → 10s
-      posts → 20s
-      👉 route becomes effectively 10s
+      preload(id)
 
-    ⚡ 5. revalidateTag
-      click Add Post
-      👉 posts update instantly (no wait 20s)
+    ->  starts DB fetch before UI waits
+    ->  while checkIsAvailable() runs
 
-    ⚡ 6. revalidatePath
-      click Reset Page
-      👉 whole page refetches immediately
+    👉 improves performance (parallel work)
 
-      ✔️ Summary (from your article → now practical)
+    🧠 Flow (what actually happens)
 
-      | Feature                     | Behavior                  |
-      | --------------------------- | ------------------------- |
-      | `next.revalidate`           | per fetch timing          |
-      | `unstable_cache revalidate` | DB timing                 |
-      | `route revalidate`          | default timing            |
-      | **lowest wins**             | fastest refresh dominates |
-      | `revalidateTag`             | selective instant update  |
-      | `revalidatePath`            | full page reset           |
+    ->  preload(id) → starts fetch
+    ->  checkIsAvailable() runs (1s delay)
+    ->  Item calls getItem(id)
+    ->  Data is already ready or reused
+
+    ✔️ Core concepts (from your article)
+
+    ✅ cache()
+    ->  deduplicates same function calls
+    ->  per request lifecycle
+
+    ✅ preload()
+    ->  starts fetch early
+    ->  avoids waterfall
+
+    ⚠️ Important
+    ->  works only in server components
+    ->  not global cache (only request-level)
+
+    This is exactly:
+
+    ->  deduplication
+    ->  preload pattern
+      → fully practical, no extra abstraction.
 
   */
 }
