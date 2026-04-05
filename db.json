@@ -12,14 +12,31 @@
       "id": "u2",
       "email": "rohit@test.com",
       "name": "rohit",
-
       "role": "member",
       "orgId": "org1"
     }
   ],
-  "posts": [{ "id": "p1", "title": "Hello World", "userId": "u1" }],
-  "products": [{ "id": "pr1", "name": "Laptop", "price": 50000 }],
-  "orders": [{ "id": "o1", "productId": "pr1", "qty": 1 }],
+  "posts": [
+    {
+      "id": "p1",
+      "title": "Hello World",
+      "userId": "u1"
+    }
+  ],
+  "products": [
+    {
+      "id": "pr1",
+      "name": "Laptop",
+      "price": 50000
+    }
+  ],
+  "orders": [
+    {
+      "id": "o1",
+      "productId": "pr1",
+      "qty": 1
+    }
+  ],
   "orgs": [
     {
       "id": "org1",

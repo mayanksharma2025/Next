@@ -40,52 +40,52 @@ export default function RootLayout({
 
 {
   /*
-    ❌ Case 1: Full conflict
-      Parent → force-static + only-cache
-      Child → force-dynamic + no-store
-      👉 ❌ completely opposite → error
 
-    ❌ Case 2: Fetch conflict inside static
-      Static route
-      but only-no-store
-      👉 ❌ invalid (static cannot be no-store)
+  focused working example using ONLY your article concepts
+→ covers:
 
-    ✅ Case 3: Valid static
-      Static + cache
-      👉 ✅ works
+    next.revalidate
+    route revalidate
+    unstable_cache revalidate
+    revalidateTag
+    revalidatePath
 
-    ✅ Case 4: Force override
-      Child uses force-dynamic
-      👉 ✅ overrides parent
+   ⏱ 1. fetch revalidation
+      next: { revalidate: 10 }
+      user updates every 10 seconds automatically
 
-    ⚠️ Case 5: Safe mixed
-      auto + default-cache
-      👉 ✅ does not break parent
+    ⏱ 2. unstable_cache revalidation
+      revalidate: 20
+      posts update every 20 seconds
 
-    ✔️ Final rule (from your article, now fully clear)
-      dynamic controls rendering mode
-      fetchCache controls data behavior
-      Both must align
+    ⏱ 3. route-level revalidate
+      export const revalidate = 60
+      page tries to revalidate every 60 sec
+      BUT overridden by lower values below 👇
 
+    ⚠️ 4. Lowest wins rule
+      user → 10s
+      posts → 20s
+      👉 route becomes effectively 10s
 
-      🚨 Conflict patterns
+    ⚡ 5. revalidateTag
+      click Add Post
+      👉 posts update instantly (no wait 20s)
 
-      | dynamic       | fetchCache     | Result |
-      | ------------- | -------------- | ------ |
-      | force-static  | only-no-store  | ❌      |
-      | force-static  | force-no-store | ❌      |
-      | force-dynamic | only-cache     | ❌      |
-      | force-dynamic | force-cache    | ❌      |
+    ⚡ 6. revalidatePath
+      click Reset Page
+      👉 whole page refetches immediately
 
-      ✅ Valid patterns
+      ✔️ Summary (from your article → now practical)
 
-      | dynamic       | fetchCache     |
-      | ------------- | -------------- |
-      | force-static  | only-cache     |
-      | force-static  | force-cache    |
-      | force-dynamic | force-no-store |
-      | auto          | default-cache  |
-
+      | Feature                     | Behavior                  |
+      | --------------------------- | ------------------------- |
+      | `next.revalidate`           | per fetch timing          |
+      | `unstable_cache revalidate` | DB timing                 |
+      | `route revalidate`          | default timing            |
+      | **lowest wins**             | fastest refresh dominates |
+      | `revalidateTag`             | selective instant update  |
+      | `revalidatePath`            | full page reset           |
 
   */
 }

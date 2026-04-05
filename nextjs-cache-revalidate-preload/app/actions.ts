@@ -3,39 +3,30 @@
 
 import { revalidateTag, revalidatePath } from "next/cache";
 
-// 🔹 update user setting (theme change)
-export async function updateTheme() {
+// 🔹 update user → tag based
+export async function updateUser() {
   await fetch("http://localhost:4000/users/u1", {
     method: "PATCH",
-    body: JSON.stringify({ theme: "dark" }),
+    body: JSON.stringify({ name: "Updated Aman" }),
   });
 
-  // only user data changes
   (revalidateTag as any)("user");
 }
 
-// 🔹 add activity log
-export async function addActivity() {
-  await fetch("http://localhost:4000/activities", {
+// 🔹 add post → tag based
+export async function addPost() {
+  await fetch("http://localhost:4000/posts", {
     method: "POST",
     body: JSON.stringify({
       id: Date.now().toString(),
-      userId: "u1",
-      text: "Clicked button",
+      title: "New Post",
     }),
   });
 
-  // only activity list changes
-  (revalidateTag as any)("activities");
+  (revalidateTag as any)("posts");
 }
 
-// 🔹 full page reset case (rare real-world)
-export async function resetEverything() {
-  await fetch("http://localhost:4000/users/u1", {
-    method: "PATCH",
-    body: JSON.stringify({ theme: "light" }),
-  });
-
-  // force entire page refresh
+// 🔹 full page reset
+export async function resetPage() {
   revalidatePath("/");
 }
