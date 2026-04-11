@@ -53,3 +53,8 @@
 [2026-02-15T05:17:13.046Z] ERROR: Variable "$input" of required type "TaskInput!" was not provided. - Path: undefined
 [2026-02-15T05:17:40.650Z] ERROR: Variable "$input" of required type "TaskInput!" was not provided. - Path: undefined
 [2026-02-15T05:23:12.963Z] ERROR: Variable "$input" of required type "TaskInput!" was not provided. - Path: undefined
+[2026-04-11T10:00:26.618Z] ERROR: Cannot query field "getTask" on type "Query". - Path: undefined
+[2026-04-11T10:00:55.294Z] ERROR: Variable "$search" of required type "String!" was not provided. - Path: undefined
+[2026-04-11T10:00:59.957Z] ERROR: Variable "$search" of required type "String!" was not provided. - Path: undefined
+[2026-04-11T10:01:01.851Z] ERROR: Variable "$search" of required type "String!" was not provided. - Path: undefined
+[2026-04-11T10:01:03.904Z] ERROR: Variable "$search" of required type "String!" was not provided. - Path: undefined
