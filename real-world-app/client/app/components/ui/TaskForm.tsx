@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 type Props = {
-  onSubmit: (form: FormData) => void;
+  onSubmit: (form: FormData) => Promise<void>;
   defaultValues?: {
     title?: string;
     description?: string;
@@ -11,15 +11,14 @@ type Props = {
 };
 
 export function TaskForm({ onSubmit, defaultValues }: Props) {
-  const [loading, setLoading] = useState(false);
+  const [pending, startTransition] = useTransition();
 
   return (
     <form
-      action={async (formData) => {
-        setLoading(true);
-        await onSubmit(formData);
+      action={(formData) => {
+        startTransition(() => onSubmit(formData));
       }}
-      className="space-y-4"
+      className="space-y-4 text-white hover:shadow-lg hover:border-slate-300 transition-all duration-200"
     >
       <input
         name="title"
@@ -37,23 +36,32 @@ export function TaskForm({ onSubmit, defaultValues }: Props) {
       />
 
       <select name="status" className="w-full border p-2 rounded">
-        <option value="TODO">TODO</option>
-        <option value="IN_PROGRESS">IN_PROGRESS</option>
-        <option value="DONE">DONE</option>
+        <option value="in-progress">in-progress</option>
+        <option value="done">done</option>
       </select>
 
       <select name="priority" className="w-full border p-2 rounded">
-        <option value="LOW">LOW</option>
-        <option value="MEDIUM">MEDIUM</option>
-        <option value="HIGH">HIGH</option>
+        <option value="low">low</option>
+        <option value="medium">medium</option>
+        <option value="high">high</option>
       </select>
 
       <button
-        disabled={loading}
-        className="bg-black text-white px-4 py-2 rounded"
+        disabled={pending}
+        className="bg-black rounded-full px-4 py-3 border border-blue-600 shrink-0 text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline transition"
       >
-        {loading ? "Saving..." : "Save"}
+        {pending ? "Saving..." : "Save"}
       </button>
     </form>
   );
 }
+
+// 5. ✅ Optional (Better Optimistic UX)
+// import { useRouter } from "next/navigation";
+
+// const router = useRouter();
+
+// startTransition(async () => {
+//   await onSubmit(formData);
+//   router.push("/tasks"); // feels instant
+// });

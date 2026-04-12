@@ -1,6 +1,7 @@
 import { getTasks } from "@/lib/tasks";
 import { TaskCard } from "@/app/components/ui/TaskCard";
 import { Pagination } from "@/app/components/ui/Pagination";
+import Link from "next/link";
 
 type Props = {
   searchParams: Promise<{
@@ -28,7 +29,12 @@ export default async function TasksPage({ searchParams }: Props) {
   return (
     <div className="p-6 space-y-4 bg-gray-200">
       <h1 className="text-2xl font-semibold">Tasks</h1>
-
+      <Link
+        href="/tasks/form"
+        className="inline-block bg-black text-white px-4 py-2 rounded"
+      >
+        + Create Task
+      </Link>
       {/* ✅ FIXED FORM */}
       <form method="GET" className="flex gap-2 mb-4">
         <input
