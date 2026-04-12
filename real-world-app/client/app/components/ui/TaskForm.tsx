@@ -35,12 +35,16 @@ export function TaskForm({ onSubmit, defaultValues }: Props) {
         className="w-full border p-2 rounded"
       />
 
-      <select name="status" className="w-full border p-2 rounded">
-        <option value="in-progress">in-progress</option>
-        <option value="done">done</option>
+      <select name="status" className="w-full border p-2 rounded text-blue-500">
+        <option value="pending">Pending</option>
+        <option value="in-progress">In-progress</option>
+        <option value="completed">Completed</option>
       </select>
 
-      <select name="priority" className="w-full border p-2 rounded">
+      <select
+        name="priority"
+        className="w-full border p-2 rounded text-blue-500"
+      >
         <option value="low">low</option>
         <option value="medium">medium</option>
         <option value="high">high</option>
