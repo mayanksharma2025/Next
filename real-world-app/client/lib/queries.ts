@@ -106,3 +106,16 @@ query TaskById($search: String, $limit: Int!, $offset: Int!) {
   }
 }
 `;
+
+export const COMMENTS_QUERY = `
+query Comments($taskId: ID!) {
+  comments(taskId: $taskId) {
+    id
+    content
+    author {
+      name
+    }
+    createdAt
+  }
+}
+`;

@@ -47,3 +47,16 @@ mutation DeleteTask($id: ID!) {
   deleteTask(id: $id)
 }
 `;
+
+export const ADD_COMMENT = `
+mutation AddComment($taskId: ID!, $content: String!) {
+  addComment(taskId: $taskId, content: $content) {
+    id
+    content
+    createdAt
+    author {
+      name
+    }
+  }
+}
+`;
