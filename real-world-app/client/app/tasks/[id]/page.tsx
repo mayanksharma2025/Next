@@ -3,6 +3,8 @@ import { TASKS_QUERY, COMMENTS_QUERY } from "@/lib/queries";
 import { ADD_COMMENT, DELETE_TASK } from "@/lib/mutations";
 import { redirect } from "next/navigation";
 import { CommentForm } from "@/app/components/ui/CommentForm";
+import { CommentItem } from "@/app/components/ui/CommentItem";
+import { UPDATE_COMMENT, DELETE_COMMENT } from "@/lib/mutations";
 import { revalidatePath } from "next/cache";
 
 type Props = {
@@ -43,6 +45,20 @@ export default async function TaskDetail({ params }: Props) {
     redirect("/tasks");
   }
 
+  async function updateComment(id: string, content: string) {
+    "use server";
+
+    await graphqlFetch(UPDATE_COMMENT, { id, content });
+    revalidatePath(`/tasks/${id}`);
+  }
+
+  async function deleteComment(id: string) {
+    "use server";
+
+    await graphqlFetch(DELETE_COMMENT, { id });
+    revalidatePath(`/tasks/${id}`);
+  }
+
   return (
     <div className="p-6 space-y-6 text-white hover:shadow-lg hover:border-slate-300 transition-all duration-200">
       {/* Task */}
@@ -59,12 +75,22 @@ export default async function TaskDetail({ params }: Props) {
         <CommentForm taskId={id} onAdd={addComment} />
 
         {/* List */}
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           {comments.map((c: any) => (
             <div key={c.id} className="border p-3 rounded">
               <p className="text-sm">{c.content}</p>
               <p className="text-xs text-gray-500">— {c.author.name}</p>
             </div>
+          ))}
+        </div> */}
+        <div className="space-y-2">
+          {comments.map((c: any) => (
+            <CommentItem
+              key={c.id}
+              comment={c}
+              onUpdate={updateComment}
+              onDelete={deleteComment}
+            />
           ))}
         </div>
       </div>

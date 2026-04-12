@@ -60,3 +60,18 @@ mutation AddComment($taskId: ID!, $content: String!) {
   }
 }
 `;
+
+export const UPDATE_COMMENT = `
+mutation UpdateComment($id: ID!, $content: String!) {
+  updateComment(id: $id, content: $content) {
+    id
+    content
+  }
+}
+`;
+
+export const DELETE_COMMENT = `
+mutation DeleteComment($id: ID!) {
+  deleteComment(id: $id)
+}
+`;
