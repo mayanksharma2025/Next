@@ -11,30 +11,52 @@ export function CommentForm({
 }) {
   const [content, setContent] = useState("");
   const [pending, startTransition] = useTransition();
+  const [sending, setSending] = useState<string | null>(null);
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (!content.trim()) return;
+    <div className="space-y-2">
+      {/* ✅ optimistic preview */}
+      {sending && (
+        <div className="text-sm border p-2 rounded opacity-60 italic">
+          {sending} (sending...)
+        </div>
+      )}
 
-        const value = content;
-        setContent(""); // ✅ optimistic clear
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!content.trim()) return;
 
-        startTransition(() => onAdd(value));
-      }}
-      className="flex gap-2 text-white hover:shadow-lg hover:border-slate-300 transition-all duration-200"
-    >
-      <input
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="Add comment..."
-        className="flex-1 border p-4 rounded"
-      />
+          const value = content;
 
-      <button disabled={pending} className="bg-white text-black px-4 rounded">
-        {pending ? "..." : "Add"}
-      </button>
-    </form>
+          setContent(""); // clear input
+          setSending(value); // ✅ show optimistic text
+
+          startTransition(async () => {
+            try {
+              await onAdd(value);
+            } finally {
+              setSending(null); // remove after done
+            }
+          });
+        }}
+        className="flex gap-2"
+      >
+        <input
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Add comment..."
+          className="flex-1 border p-3 rounded"
+        />
+
+        <button
+          disabled={pending}
+          className="bg-black text-white px-4 rounded flex items-center gap-2"
+        >
+          {pending && <span className="animate-spin">⏳</span>}
+          Add
+        </button>
+      </form>
+    </div>
   );
 }
