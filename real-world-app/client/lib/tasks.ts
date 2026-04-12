@@ -7,6 +7,14 @@ type TasksResponse = {
 };
 
 export async function getTasks(filters: TaskFilters) {
-  const data = await graphqlFetch<TasksResponse>(TASKS_QUERY, filters as any);
+  const variables = {
+    limit: filters.limit,
+    offset: filters.offset,
+    search: filters.search || undefined,
+    status: filters.status || undefined,
+    priority: filters.priority || undefined,
+  };
+  // console.log("GRAPHQL VARIABLES:", variables);
+  const data = await graphqlFetch<TasksResponse>(TASKS_QUERY, variables);
   return data.tasks;
 }
