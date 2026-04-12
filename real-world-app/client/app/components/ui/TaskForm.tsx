@@ -7,6 +7,8 @@ type Props = {
   defaultValues?: {
     title?: string;
     description?: string;
+    status?: string;
+    priority?: string;
   };
 };
 
@@ -35,7 +37,11 @@ export function TaskForm({ onSubmit, defaultValues }: Props) {
         className="w-full border p-2 rounded"
       />
 
-      <select name="status" className="w-full border p-2 rounded text-blue-500">
+      <select
+        name="status"
+        className="w-full border p-2 rounded text-blue-500"
+        defaultValue={defaultValues?.status ?? "pending"}
+      >
         <option value="pending">Pending</option>
         <option value="in-progress">In-progress</option>
         <option value="completed">Completed</option>
@@ -44,6 +50,7 @@ export function TaskForm({ onSubmit, defaultValues }: Props) {
       <select
         name="priority"
         className="w-full border p-2 rounded text-blue-500"
+        defaultValue={defaultValues?.priority ?? "low"}
       >
         <option value="low">low</option>
         <option value="medium">medium</option>

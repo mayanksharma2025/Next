@@ -27,6 +27,8 @@ export default async function TaskFormPage({ searchParams }: Props) {
       defaultValues = {
         title: task.title,
         description: task.description,
+        status: task.status,
+        priority: task.priority,
       };
     }
   }
