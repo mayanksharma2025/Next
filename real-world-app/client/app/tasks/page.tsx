@@ -1,6 +1,7 @@
 import { getTasks } from "@/lib/tasks";
 import { TaskCard } from "@/app/components/ui/TaskCard";
 import { Pagination } from "@/app/components/ui/Pagination";
+import { requireUser } from "@/lib/require-user";
 
 type Props = {
   searchParams: Promise<{
@@ -13,6 +14,7 @@ type Props = {
 
 export default async function TasksPage({ searchParams }: Props) {
   const params = await searchParams; // ✅ REQUIRED
+  const user = await requireUser(); // ✅ get logged-in user
 
   const limit = 10;
   const offset = Number(params.offset ?? 0);
@@ -22,7 +24,7 @@ export default async function TasksPage({ searchParams }: Props) {
     offset,
     search: params.search || undefined,
     status: params.status || undefined,
-    priority: params.priority || undefined,
+    createdBy: [user.id], // ✅ pass here
   });
 
   return (

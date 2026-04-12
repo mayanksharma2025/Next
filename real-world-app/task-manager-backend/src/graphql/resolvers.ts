@@ -37,6 +37,7 @@ const baseResolvers = {
       if (!req.user) throw new Error("Not authenticated");
 
       const filter: any = {};
+      // if (req.user.id) filter.createdBy = req.user.id; // ✅ FORCE AUTH USER
       if (status) filter.status = status;
       if (priority) filter.priority = priority;
       if (search) filter.title = { $regex: search, $options: "i" };
