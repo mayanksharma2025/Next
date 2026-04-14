@@ -1,18 +1,18 @@
-'use client'
+"use client";
 
-import toast from 'react-hot-toast'
+import toast from "react-hot-toast";
 
 export function LogoutButton() {
   async function logout() {
-    const res = await fetch('http://localhost:3000/api/auth/logout', {
-      method: 'POST',
-    })
+    const res = await fetch("/api/auth/logout", {
+      method: "POST",
+    });
 
     if (res.ok) {
-      toast.success('Logged out')
-      window.location.href = '/login'
+      toast.success("Logged out");
+      window.location.replace("/login");
     } else {
-      toast.error('Logout failed')
+      toast.error("Logout failed");
     }
   }
 
@@ -23,5 +23,5 @@ export function LogoutButton() {
     >
       Logout
     </button>
-  )
+  );
 }

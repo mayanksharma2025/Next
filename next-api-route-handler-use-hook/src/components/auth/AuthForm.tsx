@@ -1,31 +1,28 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Input } from '../ui/Input'
-import { Button } from '../ui/Button'
+import { useState } from "react";
+import { Input } from "../ui/Input";
+import { Button } from "../ui/Button";
 
 interface AuthFormProps {
-  title: string
-  submitLabel: string
-  onSubmit: (formData: FormData) => Promise<void>
+  title: string;
+  submitLabel: string;
+  action: (formData: FormData) => Promise<void>; // ✅ FIXED
 }
 
-export function AuthForm({ title, submitLabel, onSubmit }: AuthFormProps) {
-  const [loading, setLoading] = useState(false)
-
-  async function action(formData: FormData) {
-    setLoading(true)
-    try {
-      console.log(formData.get('email'))
-      await onSubmit(formData)
-    } finally {
-      setLoading(false)
-    }
-  }
+export function AuthForm({ title, submitLabel, action }: AuthFormProps) {
+  const [loading, setLoading] = useState(false);
 
   return (
     <form
-      action={action}
+      action={async (formData) => {
+        setLoading(true);
+        try {
+          await action(formData);
+        } finally {
+          setLoading(false);
+        }
+      }}
       className="w-full max-w-md rounded-lg bg-white p-6 shadow"
     >
       <h1 className="mb-6 text-2xl font-semibold text-center">{title}</h1>
@@ -41,8 +38,8 @@ export function AuthForm({ title, submitLabel, onSubmit }: AuthFormProps) {
       </div>
 
       <Button className="mt-6" disabled={loading}>
-        {loading ? 'Please wait...' : submitLabel}
+        {loading ? "Please wait..." : submitLabel}
       </Button>
     </form>
-  )
+  );
 }

@@ -1,27 +1,27 @@
-import { cookies } from 'next/headers'
-import { verifyJwt } from './jwt'
-import { connectDB } from './db'
-import { User } from '../models/User'
+import { cookies } from "next/headers";
+import { connectDB } from "./db";
+import { Session } from "../models/Session";
+import { User } from "../models/User";
 
-export async function getCurrentUser() {
-    const cookieStore = await cookies()
-    const token = cookieStore.get('token')?.value
+export async function getUser() {
+  const cookieStore = await cookies(); // ✅ MUST await
 
-    if (!token) return null
+  const sessionId = cookieStore.get("session")?.value;
 
-    const payload = verifyJwt(token)
+  if (!sessionId) return null;
 
-    await connectDB()
-    return User.findById(payload.userId).select('-password')
-}
-export async function getAdminUser() {
-    const cookieStore = await cookies()
-    const token = cookieStore.get('token')?.value
+  await connectDB();
 
-    if (!token) return null
+  const session = await Session.findById(sessionId);
 
-    const payload = verifyJwt(token)
+  if (!session) return null;
 
-    await connectDB()
-    return User.find({ role: "admin" }).select('-password')
+  if (session.expiresAt < new Date()) {
+    await Session.deleteOne({ _id: sessionId });
+    return null;
+  }
+
+  const user = await User.findById(session.userId).select("-password");
+
+  return user;
 }

@@ -1,42 +1,42 @@
-import { use } from 'react'
-import type { UserEntity } from '../../types/user'
-import { getCurrentUser } from 'lib/auth'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
+import { use } from "react";
+import type { UserEntity } from "../../types/user";
+import { getUser } from "lib/auth";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function MyProfile() {
-  const user = await getCurrentUser()
+  const user = await getUser();
 
-  if (!user) redirect('/login')
+  // if (!user) redirect("/login");
 
   return (
     <section className="rounded bg-white p-6 shadow space-y-2">
       <div className="flex gap-4 my-2">
         <h2 className="text-xl font-semibold">My Profile</h2>
         <h2 className="text-xl font-semibold text-blue-400">
-          <Link href={'/dashboard/todos'} rel="noopener noreferrer">
+          <Link href={"/dashboard/todos"} rel="noopener noreferrer">
             Todos
           </Link>
         </h2>
-        {user.role === 'admin' && (
+        {user.role === "admin" && (
           <h2 className="text-xl font-semibold text-blue-400">
-            <Link href={'/dashboard/admin'} rel="noopener noreferrer">
+            <Link href={"/dashboard/admin"} rel="noopener noreferrer">
               Admin
             </Link>
           </h2>
         )}
       </div>
       <p>Email: {user.email}</p>
-      <p>Name: {user.profile?.name ?? '—'}</p>
+      <p>Name: {user.profile?.name ?? "—"}</p>
 
       <p>
-        Address: {user.profile?.address?.city ?? '—'},{' '}
-        {user.profile?.address?.country ?? '—'}
+        Address: {user.profile?.address?.city ?? "—"},{" "}
+        {user.profile?.address?.country ?? "—"}
       </p>
 
-      <p>Skills: {user.profile?.skills?.join(', ') ?? '—'}</p>
+      <p>Skills: {user.profile?.skills?.join(", ") ?? "—"}</p>
     </section>
-  )
+  );
 }
 
 // import { use } from 'react'

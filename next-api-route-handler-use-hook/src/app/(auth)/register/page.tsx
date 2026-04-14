@@ -1,26 +1,23 @@
-import { redirect } from 'next/navigation'
-import { AuthForm } from '../../../components/auth/AuthForm'
-import { registerUser } from 'lib/services/auth.service'
+import { redirect } from "next/navigation";
+import { AuthForm } from "../../../components/auth/AuthForm";
+import { registerUser } from "lib/services/auth.service";
 
 export default function RegisterPage() {
   async function submit(formData: FormData) {
-    'use server'
+    "use server";
 
-    const email = String(formData.get('email'))
-    const password = String(formData.get('password'))
+    const email = String(formData.get("email"));
+    const password = String(formData.get("password"));
 
-    await registerUser(email, password)
+    await registerUser(email, password);
 
-    redirect('/login')
+    redirect("/login");
   }
 
   return (
     <main className="flex min-h-screen items-center justify-center">
-      <AuthForm
-        title="Create Account"
-        submitLabel="Register"
-        onSubmit={submit}
-      />
+      {/* ✅ use action instead of onSubmit */}
+      <AuthForm title="Create Account" submitLabel="Register" action={submit} />
     </main>
-  )
+  );
 }
