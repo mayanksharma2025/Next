@@ -19,6 +19,8 @@
       }
     ],
     "baseUrl": "src",
+    "ignoreDeprecations": "6.0",
+    "allowImportingTsExtensions": true,
     "paths": {
       "@/*": ["./src*"]
     }
