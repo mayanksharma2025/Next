@@ -17,3 +17,17 @@ moduleNameMapper: {
 };
 
 export default config;
+
+✅ What you HAVE covered (good foundation)
+✔ Core logic
+graphqlFetch ✅
+getTasks ✅
+✔ Auth flow
+loginAction ✅
+✔ Basic UI
+TaskForm ✅
+Pagination ✅
+✔ Task mutations (basic shape)
+create/update/delete (mocked) ✅
+
+👉 This is enough for interviews / basic production confidence
